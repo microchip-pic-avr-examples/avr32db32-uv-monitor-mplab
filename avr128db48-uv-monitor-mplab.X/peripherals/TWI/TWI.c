@@ -16,7 +16,7 @@
 #define TWI_IS_BUSBUSY() ((TWI0.MSTATUS & TWI_BUSSTATE_BUSY_gc) == TWI_BUSSTATE_BUSY_gc)
 //#define TWI_IS_BAD() ((TWI_IS_BUSERR()) | (TWI_IS_ARBLOST()) | (CLIENT_NACK()) | (TWI_IS_BUSBUSY()))
 
-#define TWI_WAIT() while (!(TWI_IS_CLOCKHELD()) && !(TWI_IS_BUSERR()) && !(TWI_IS_ARBLOST()) && !(TWI_IS_BUSBUSY()))
+#define TWI_WAIT() while (!((TWI_IS_CLOCKHELD()) || (TWI_IS_BUSERR()) || (TWI_IS_ARBLOST()) || (TWI_IS_BUSBUSY())))
 
 void configureTWIPins(void)
 {
@@ -62,7 +62,7 @@ void TWI_initHost(void)
     TWI0.MBAUD = 15;
     
     //[No ISRs] and Host Mode
-    TWI0.MCTRLA = TWI_ENABLE_bm | TWI_SDASETUP_8CYC_gc;
+    TWI0.MCTRLA = TWI_ENABLE_bm;
 
 }
 
@@ -97,7 +97,10 @@ void _readFromTWI(uint8_t* data, uint8_t len)
     uint8_t bCount = 0;
     
     //Release the clock hold
+    
     TWI0.MSTATUS = TWI_CLKHOLD_bm;
+    
+    //TWI0.MCTRLB = TWI_MCMD_RECVTRANS_gc;
     
     while (bCount < len)
     {
@@ -186,9 +189,6 @@ bool TWI_readByte(uint8_t addr, uint8_t* data)
     
     //Read byte from client
     _readFromTWI(data, 1);
-    
-    //Stop the Bus
-    TWI0.MCTRLB = TWI_MCMD_STOP_gc;
 
     return true;
 }

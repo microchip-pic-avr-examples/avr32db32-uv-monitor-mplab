@@ -69,26 +69,18 @@ int main(void)
     TWI_initHost();
     
     //Start the LTR390
-    //initLTR390();
+    initLTR390();
     
     //On Power-Up, Adjust Duty Cycle
     adjustPowerOutputBlocking();
     
     PORTB.DIRSET = PIN3_bm;
-    
-    uint8_t buffer[4];
-    
+        
     while (1)
-    {
-        TWI_sendByte(0x60, 0x00);
-        TWI_readByte(0x60, &buffer[0]);
-        //TWI_sendAndReadBytes(0x60, 0x03, &buffer[0], 1);
-        
-        //LTR390_isConnected();
-        
+    {        
         asm ("NOP");
         for (uint32_t i = 0; i < 250000; ++i) { ; }
                 
-        PORTB.OUTTGL = PIN3_bm; //(LTR390_isConnected() << PIN3_bp);
+        PORTB.OUTTGL = (LTR390_isConnected() << PIN3_bp);
     }
 }
