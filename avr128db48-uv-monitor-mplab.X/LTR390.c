@@ -100,11 +100,6 @@ uint8_t calculateUVIndex(void)
     if (!ok)
         return 0xFF;
     
-    //TESTING ONLY
-    t_meas[0] = 0x01;
-    t_meas[1] = 0x02;
-    t_meas[2] = 0x03;
-    
     uint32_t meas = ((uint32_t) t_meas[2] << 16) | ((uint16_t) t_meas[1] << 8) | t_meas[0];
     uint8_t result = 0x00;
     
