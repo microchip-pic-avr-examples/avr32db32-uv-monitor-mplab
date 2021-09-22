@@ -78,6 +78,8 @@ int main(void)
         
     while (1)
     {        
+        calculateUVIndex();
+        
         asm ("NOP");
         for (uint32_t i = 0; i < 250000; ++i) { ; }
                 

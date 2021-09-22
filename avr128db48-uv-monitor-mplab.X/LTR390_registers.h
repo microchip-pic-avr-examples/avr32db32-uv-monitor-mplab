@@ -18,8 +18,8 @@ extern "C" {
                 UVS_DATA_0, UVS_DATA_1, UVS_DATA_2, 
                 INT_CFG = 0x19, 
                 INT_PST = 0x1A, 
-                ALS_UVS_THRES_UP_0 = 0x21, ALS_UVS_THRES_UP_1, ALS_UVS_THRES_UP_2,
-                ALS_UVS_THRES_LOW_0, ALS_UVS_THRES_LOW_1, ALS_UVS_THRES_LOW_2
+                UVS_ALS_THRES_UP_0 = 0x21, UVS_ALS_THRES_UP_1, UVS_ALS_THRES_UP_2,
+                UVS_ALS_THRES_LOW_0, UVS_ALS_THRES_LOW_1, UVS_ALS_THRES_LOW_2
     } LTR390_REGISTER;
     
 //Main Control
