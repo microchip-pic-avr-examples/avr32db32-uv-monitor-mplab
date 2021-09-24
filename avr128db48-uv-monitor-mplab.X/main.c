@@ -35,12 +35,15 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include <xc.h>
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/eeprom.h>
 
 #include "switcher.h"
 #include "peripherals/TWI/TWI.h"
 #include "peripherals/CLKCTRL/CLKCTRL.h"
 #include "peripherals/RTC/RTC.h"
 #include "LTR390.h"
+#include "peripherals/SLPCTRL/SLPCTRL.h"
 
 FUSES = {
 	.WDTCFG = 0x00, // WDTCFG {PERIOD=OFF, WINDOW=OFF}
@@ -54,16 +57,30 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
+void blink(void)
+{
+    PORTB.OUTTGL = PIN3_bm;
+    
+    //Takes about 1ms
+    adjustPowerOutputISR();
+}
+
 int main(void)
 {
     //Setup CPU Clocks
     initClocks();
+    
+    //Init Sleep Controls
+    initSleepControl();
     
     //Initialize required peripherals for boost converter
     initBoost();
     
     //Initialize RTC
     initRTC();
+    
+    //Attach the ISR function
+    PIT_setISR(&blink);
         
     //Init the TWI in host mode
     TWI_initHost();
@@ -74,15 +91,17 @@ int main(void)
     //On Power-Up, Adjust Duty Cycle
     adjustPowerOutputBlocking();
     
+    //Enable LED0 (on nano) for debugging
     PORTB.DIRSET = PIN3_bm;
+    
+    //Enable Interrupts
+    sei();
         
     while (1)
     {        
         calculateUVIndex();
         
         asm ("NOP");
-        for (uint32_t i = 0; i < 250000; ++i) { ; }
-                
-        PORTB.OUTTGL = (LTR390_isConnected() << PIN3_bp);
+        for (uint32_t i = 0; i < 250000; ++i) { ; }                
     }
 }

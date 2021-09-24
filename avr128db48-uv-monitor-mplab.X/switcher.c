@@ -122,7 +122,7 @@ void adjustPowerOutputBlocking(void)
     
 }
 
-void _adjustPowerOutputISR(void)
+void adjustPowerOutputISR(void)
 {
     //If # of TCD Pulses = # of Output Pulses, increase duty cycle
     //If # of TCD Pulses < DC_REDUCE_THRESHOLD, decrease duty cycle

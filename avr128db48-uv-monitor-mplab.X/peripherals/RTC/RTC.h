@@ -10,6 +10,8 @@ extern "C" {
     //Start the RTC
     void initRTC(void);
     
+    //Set the function called by the PIT Interrupt
+    void PIT_setISR(void (*func)(void));
     
 #ifdef	__cplusplus
 }

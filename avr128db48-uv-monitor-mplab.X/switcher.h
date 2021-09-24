@@ -20,7 +20,7 @@ extern "C" {
     void adjustPowerOutputBlocking(void);
     
     //Call this function periodically to adjust the duty cycle of the TCD. Non-Blocking.
-    void _adjustPowerOutputISR(void);
+    void adjustPowerOutputISR(void);
     
 #ifdef	__cplusplus
 }

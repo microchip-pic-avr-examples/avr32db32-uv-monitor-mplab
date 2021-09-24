@@ -4,11 +4,11 @@
 
 void configureACPins(void)
 {
-    //Set as analog input (PD1)
-    PORTD.DIRCLR = PIN1_bm;
+    //Set as analog input (PD3)
+    PORTD.DIRCLR = PIN3_bm;
     
     //Disable Digital Input Buffer
-    PORTD.PIN1CTRL = PORT_ISC_INPUT_DISABLE_gc;
+    PORTD.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
     
     //Enable Output Buffer (PA7)
     PORTA.DIRSET = PIN7_bm;
