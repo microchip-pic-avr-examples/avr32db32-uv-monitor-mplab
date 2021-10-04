@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-    void initAC(void);
+    void AC_init(void);
     
 #ifdef	__cplusplus
 }

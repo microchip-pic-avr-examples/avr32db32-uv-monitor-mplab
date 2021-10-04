@@ -9,7 +9,7 @@ void configureCCLPins(void)
     PORTMUX.CCLROUTEA = PORTMUX_LUT0_ALT1_gc;
 }
 
-void initCCL(void)
+void CCL_init(void)
 {
     //Logic Function: TCD0 (PWM) & AC
     //Inputs: TCD0, AC1

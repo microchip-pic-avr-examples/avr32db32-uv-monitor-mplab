@@ -5,7 +5,7 @@
 
 void (*PIT_ISR)(void);
 
-void initRTC(void)
+void RTC_init(void)
 {
     PIT_ISR = 0;
     

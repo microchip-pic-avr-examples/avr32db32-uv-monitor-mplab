@@ -3,7 +3,7 @@
 
 #include <xc.h>
 
-void initClocks(void)
+void CLKCTRL_init(void)
 {
     //System Clock is OSCHF
     UNLOCK_CCP();
@@ -18,7 +18,7 @@ void initClocks(void)
     //CLKCTRL.MCLKCTRLB = CLKCTRL_PDIV_4X_gc | CLKCTRL_PEN_bm;
 }
 
-void setOsc4M(void)
+void CLKCTRL_setOsc4M(void)
 {
     
 }

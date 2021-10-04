@@ -5,8 +5,9 @@
 extern "C" {
 #endif
     
-    void initSleepControl(void);
-
+    //Init the Sleep Controller
+    void SLPCTRL_init(void);
+    
 #ifdef	__cplusplus
 }
 #endif

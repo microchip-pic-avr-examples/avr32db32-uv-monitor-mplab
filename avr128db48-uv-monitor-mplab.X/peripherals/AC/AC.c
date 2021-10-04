@@ -14,7 +14,7 @@ void configureACPins(void)
     PORTA.DIRSET = PIN7_bm;
 }
 
-void initAC(void)
+void AC_init(void)
 {
     //Select DACREF Source (1.024V)
     VREF.ACREF = VREF_REFSEL_1V024_gc;

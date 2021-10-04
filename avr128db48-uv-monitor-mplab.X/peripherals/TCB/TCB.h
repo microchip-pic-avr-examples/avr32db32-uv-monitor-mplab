@@ -8,22 +8,22 @@ extern "C" {
 #include <stdint.h>
         
     //Init TCB
-    void initTCB(void);
+    void TCB_init(void);
 
     //Start TCB0 and TCB1
-    void startOneShotCounters(void);
+    void TCB_startOneShotCounters(void);
     
     //Set the pulse timeout
-    void setPulseTimeoutTCB1(uint16_t count);
+    void TCB_setPulseTimeout(uint16_t count);
     
     //Get the number of output pulses
-    uint16_t getPulseCountTCB0(void);
+    uint16_t TCB_getOutputPulses(void);
     
     //Halt Output Pulse Counter
-    void stopOutputCounter(void);
+    void TCB_stopOutputCounter(void);
     
     //Wait for TCB1 to finish
-    void waitForPulses(void);
+    void TCB_waitForPulses(void);
     
 #ifdef	__cplusplus
 }

@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
     
-    void initEVSYS(void);
+    void EVSYS_init(void);
     
 #ifdef	__cplusplus
 }

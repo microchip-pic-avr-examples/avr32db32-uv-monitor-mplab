@@ -8,31 +8,31 @@ extern "C" {
 #include <stdint.h>
     
     //Init TCD
-    void initTCD(void);
+    void TCD_init(void);
     
     //Start TCD
-    void startTCD(void);
+    void TCD_start(void);
     
     //Stop TCD
-    void stopTCD(void);
+    void TCD_stop(void);
     
     //Increase Duty Cycle by 1
-    void incrementDutyCycle(void);
+    void TCD_incrementDutyCycle(void);
     
     //Decrease Duty Cycle by 1
-    void decrementDutyCycle(void);
+    void TCD_decrementDutyCycle(void);
     
     //Get CMPCLRA (which is the duty cycle)
-    uint16_t getDutyCycle(void);
+    uint16_t TCD_getDutyCycle(void);
     
     //Set the Clear Count for WOA
-    void setCMPCLRA(uint16_t value);
+    void TCD_setCMPCLRA(uint16_t value);
     
     //Get the clear count for WOA
-    uint16_t getCMPCLRA(void);
+    uint16_t TCD_getCMPCLRA(void);
     
     //Sync Changes 
-    void syncChanges(void);
+    void TCD_syncChanges(void);
 
 #ifdef	__cplusplus
 }

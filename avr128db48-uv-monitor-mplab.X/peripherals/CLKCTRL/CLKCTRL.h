@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-    void initClocks(void);
-    void setOsc4M(void);
+    void CLKCTRL_init(void);
+    void CLKCTRL_setOsc4M(void);
 
 
 #ifdef	__cplusplus

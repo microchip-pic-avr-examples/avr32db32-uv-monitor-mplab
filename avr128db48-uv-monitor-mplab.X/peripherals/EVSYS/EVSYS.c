@@ -2,7 +2,7 @@
 
 #include <xc.h>
 
-void initEVSYS(void)
+void EVSYS_init(void)
 {
     //Output Pulse Counter Setup
     

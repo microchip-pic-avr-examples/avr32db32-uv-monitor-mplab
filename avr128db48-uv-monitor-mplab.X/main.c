@@ -44,6 +44,10 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include "peripherals/RTC/RTC.h"
 #include "LTR390.h"
 #include "peripherals/SLPCTRL/SLPCTRL.h"
+#include "peripherals/DAC/DAC.h"
+#include "peripherals/OPAMP/OPAMP.h"
+#include "peripherals/IO.h"
+#include "system.h"
 
 FUSES = {
 	.WDTCFG = 0x00, // WDTCFG {PERIOD=OFF, WINDOW=OFF}
@@ -57,49 +61,33 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
-void blink(void)
-{
-    PORTB.OUTTGL = PIN3_bm;
-    
-    //Takes about 1ms
-    adjustPowerOutputISR();
-}
-
 int main(void)
 {
-    //Setup CPU Clocks
-    initClocks();
+    //Init Peripherals
+    initPeripherals();
     
-    //Init Sleep Controls
-    initSleepControl();
-    
-    //Initialize required peripherals for boost converter
+    //Configure the Boost
     initBoost();
-    
-    //Initialize RTC
-    initRTC();
-    
-    //Attach the ISR function
-    PIT_setISR(&blink);
-        
-    //Init the TWI in host mode
-    TWI_initHost();
-    
-    //Start the LTR390
-    initLTR390();
     
     //On Power-Up, Adjust Duty Cycle
     adjustPowerOutputBlocking();
     
-    //Enable LED0 (on nano) for debugging
-    PORTB.DIRSET = PIN3_bm;
-    
+    //Connect the PIT Interrupt to the Power Adjustment Function
+    PIT_setISR(&adjustPowerOutputISR);
+        
     //Enable Interrupts
     sei();
         
+    uint8_t count = 1;
+    
     while (1)
     {        
-        calculateUVIndex();
+        //calculateUVIndex();
+        IO_setLEDs(count);
+        count++;
+        
+        if (count == 9)
+            count = 0;
         
         asm ("NOP");
         for (uint32_t i = 0; i < 250000; ++i) { ; }                

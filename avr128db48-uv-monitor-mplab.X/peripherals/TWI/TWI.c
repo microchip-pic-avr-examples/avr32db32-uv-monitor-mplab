@@ -18,17 +18,6 @@
 
 #define TWI_WAIT() while (!((TWI_IS_CLOCKHELD()) || (TWI_IS_BUSERR()) || (TWI_IS_ARBLOST()) || (TWI_IS_BUSBUSY())))
 
-void configureTWIPins(void)
-{
-    PORTA.DIRSET = PIN2_bm | PIN3_bm;
-        
-    //Enable Pull-Ups
-    PORTA.PINCONFIG = PORT_PULLUPEN_bm;
-    
-    //Select RA2/RA3
-    PORTA.PINCTRLUPD = PIN2_bm | PIN3_bm;
-}
-
 bool isTWIBad(void)
 {
     //Checks for: NACK, ARBLOST, BUSERR, Bus Busy
@@ -41,10 +30,7 @@ bool isTWIBad(void)
 }
 
 void TWI_initHost(void)
-{
-    //Setup TWI I/O
-    configureTWIPins();
-    
+{    
     //Standard 100kHz TWI, 4 Cycle Hold, 50ns SDA Hold Time
     TWI0.CTRLA = TWI_SDAHOLD_50NS_gc;
     

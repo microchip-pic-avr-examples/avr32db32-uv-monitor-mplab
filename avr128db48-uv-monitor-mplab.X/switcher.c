@@ -21,30 +21,15 @@
 const uint16_t DC_REDUCE_THRESHOLD = PULSE_WAIT * 0.90;
 
 void initBoost(void)
-{
-    //Init TCD
-    initTCD();
-    
-    //Init CCL
-    initCCL();
-    
-    //Init AC
-    initAC();
-    
-    //Init the Event System
-    initEVSYS();
-    
-    //Init TCB
-    initTCB();
-    
+{   
     //Set # of pulses to measure
-    setPulseTimeoutTCB1(PULSE_WAIT);
+    TCB_setPulseTimeout(PULSE_WAIT);
     
     //Set the Default Duty Cycle
-    setCMPCLRA(DEFAULT_DUTY_CYCLE);
+    TCD_setCMPCLRA(DEFAULT_DUTY_CYCLE);
     
     //Start TCD
-    startTCD();
+    TCD_start();
 }
 
 void adjustPowerOutputBlocking(void)
@@ -60,13 +45,13 @@ void adjustPowerOutputBlocking(void)
     do
     {
         //Start Missed Pulse Counter
-        startOneShotCounters();
+        TCB_startOneShotCounters();
 
         //Wait...
-        waitForPulses();
+        TCB_waitForPulses();
 
         //Stop Counter
-        stopOutputCounter();
+        TCB_stopOutputCounter();
 
         /* 
          * In a VERY rare event, it might be possible for TCB0 to have
@@ -77,21 +62,21 @@ void adjustPowerOutputBlocking(void)
          */
         
         //Get the counted pulse
-        pulseCount = getPulseCountTCB0();
+        pulseCount = TCB_getOutputPulses();
 
         if (pulseCount < PULSE_WAIT)
         {
-            missed = PULSE_WAIT - getPulseCountTCB0();
+            missed = PULSE_WAIT - TCB_getOutputPulses();
         }
 
         if (missed == 0)
         {
             //Adjust DC up
 
-            if (getDutyCycle() < MAX_DUTY_CYCLE)
+            if (TCD_getDutyCycle() < MAX_DUTY_CYCLE)
             {
                 //Not at max value
-                incrementDutyCycle();
+                TCD_incrementDutyCycle();
                 
             }
         }
@@ -99,10 +84,10 @@ void adjustPowerOutputBlocking(void)
         {
             //Adjust DC down
 
-            if (getDutyCycle() > MIN_DUTY_CYCLE)
+            if (TCD_getDutyCycle() > MIN_DUTY_CYCLE)
             {
                 //Not at min value
-                decrementDutyCycle();
+                TCD_decrementDutyCycle();
             }
         }
         else
@@ -131,13 +116,13 @@ void adjustPowerOutputISR(void)
     uint16_t missed = 0;
     
     //Start Missed Pulse Counter
-    startOneShotCounters();
+    TCB_startOneShotCounters();
 
     //Wait...
-    waitForPulses();
+    TCB_waitForPulses();
 
     //Stop Counter
-    stopOutputCounter();
+    TCB_stopOutputCounter();
 
     /* 
      * In a VERY rare event, it might be possible for TCB0 to have
@@ -148,21 +133,21 @@ void adjustPowerOutputISR(void)
      */
 
     //Get the counted pulse
-    pulseCount = getPulseCountTCB0();
+    pulseCount = TCB_getOutputPulses();
 
     if (pulseCount < PULSE_WAIT)
     {
-        missed = PULSE_WAIT - getPulseCountTCB0();
+        missed = PULSE_WAIT - TCB_getOutputPulses();
     }
 
     if (missed == 0)
     {
         //Adjust DC up
 
-        if (getDutyCycle() < MAX_DUTY_CYCLE)
+        if (TCD_getDutyCycle() < MAX_DUTY_CYCLE)
         {
             //Not at max value
-            incrementDutyCycle();
+            TCD_incrementDutyCycle();
 
         }
     }
@@ -170,10 +155,10 @@ void adjustPowerOutputISR(void)
     {
         //Adjust DC down
 
-        if (getDutyCycle() > MIN_DUTY_CYCLE)
+        if (TCD_getDutyCycle() > MIN_DUTY_CYCLE)
         {
             //Not at min value
-            decrementDutyCycle();
+            TCD_decrementDutyCycle();
         }
     }
     else

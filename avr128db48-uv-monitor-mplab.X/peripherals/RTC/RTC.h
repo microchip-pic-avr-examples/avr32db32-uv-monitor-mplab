@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
     
     //Start the RTC
-    void initRTC(void);
+    void RTC_init(void);
     
     //Set the function called by the PIT Interrupt
     void PIT_setISR(void (*func)(void));

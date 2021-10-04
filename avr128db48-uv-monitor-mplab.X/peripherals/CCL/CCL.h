@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-    void initCCL(void);
+    void CCL_init(void);
     
 #ifdef	__cplusplus
 }

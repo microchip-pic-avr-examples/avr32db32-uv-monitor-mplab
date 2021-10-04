@@ -49,7 +49,7 @@ void _initTCB2(void)
 
 }
 
-void initTCB(void)
+void TCB_init(void)
 {
     _initTCB0();
     _initTCB1();
@@ -57,7 +57,7 @@ void initTCB(void)
 }
 
 //Start TCB0 and TCB1
-void startOneShotCounters(void)
+void TCB_startOneShotCounters(void)
 {
     //Clear Counters
     TCB0.CNT = 0;
@@ -68,25 +68,25 @@ void startOneShotCounters(void)
     TCB1.CTRLA |= TCB_ENABLE_bm;
 }
 
-void setPulseTimeoutTCB1(uint16_t count)
+void TCB_setPulseTimeout(uint16_t count)
 {
     TCB1.CCMP = count;
 }
 
 //Get the number of output pulses
-uint16_t getPulseCountTCB0(void)
+uint16_t TCB_getOutputPulses(void)
 {
     return TCB0.CNT;
 }
 
 //Halt Output Pulse Counter
-void stopOutputCounter(void)
+void TCB_stopOutputCounter(void)
 {
     TCB0.CTRLA &= ~TCB_ENABLE_bm;
 }
 
 //Wait for TCB1 to finish
-void waitForPulses(void)
+void TCB_waitForPulses(void)
 {
     while (TCB1.STATUS);
 }

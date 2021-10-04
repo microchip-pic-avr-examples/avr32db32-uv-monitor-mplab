@@ -8,14 +8,23 @@
         <logicalFolder name="f5" displayName="AC" projectFiles="true">
           <itemPath>peripherals/AC/AC.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="f12" displayName="ADC" projectFiles="true">
+          <itemPath>peripherals/ADC/ADC.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="f4" displayName="CCL" projectFiles="true">
           <itemPath>peripherals/CCL/CCL.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
           <itemPath>peripherals/CLKCTRL/CLKCTRL.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="f10" displayName="DAC" projectFiles="true">
+          <itemPath>peripherals/DAC/DAC.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
           <itemPath>peripherals/EVSYS/EVSYS.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f11" displayName="OPAMP" projectFiles="true">
+          <itemPath>peripherals/OPAMP/OPAMP.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f8" displayName="RTC" projectFiles="true">
           <itemPath>peripherals/RTC/RTC.h</itemPath>
@@ -33,10 +42,12 @@
           <itemPath>peripherals/TWI/TWI.h</itemPath>
         </logicalFolder>
         <itemPath>peripherals/utility.h</itemPath>
+        <itemPath>peripherals/IO.h</itemPath>
       </logicalFolder>
       <itemPath>switcher.h</itemPath>
       <itemPath>LTR390.h</itemPath>
       <itemPath>LTR390_registers.h</itemPath>
+      <itemPath>system.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -49,14 +60,23 @@
         <logicalFolder name="f5" displayName="AC" projectFiles="true">
           <itemPath>peripherals/AC/AC.c</itemPath>
         </logicalFolder>
+        <logicalFolder name="f12" displayName="ADC" projectFiles="true">
+          <itemPath>peripherals/ADC/ADC.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="f4" displayName="CCL" projectFiles="true">
           <itemPath>peripherals/CCL/CCL.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
           <itemPath>peripherals/CLKCTRL/CLKCTRL.c</itemPath>
         </logicalFolder>
+        <logicalFolder name="f10" displayName="DAC" projectFiles="true">
+          <itemPath>peripherals/DAC/DAC.c</itemPath>
+        </logicalFolder>
         <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
           <itemPath>peripherals/EVSYS/EVSYS.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f11" displayName="OPAMP" projectFiles="true">
+          <itemPath>peripherals/OPAMP/OPAMP.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f8" displayName="RTC" projectFiles="true">
           <itemPath>peripherals/RTC/RTC.c</itemPath>
@@ -73,15 +93,18 @@
         <logicalFolder name="f2" displayName="TWI" projectFiles="true">
           <itemPath>peripherals/TWI/TWI.c</itemPath>
         </logicalFolder>
+        <itemPath>peripherals/IO.c</itemPath>
       </logicalFolder>
       <itemPath>switcher.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>LTR390.c</itemPath>
+      <itemPath>system.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
+      <itemPath>avr128db48-uv-monitor-mplab.mc3</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -95,7 +118,7 @@
         <targetDevice>AVR128DB48</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>nEdbgTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>2.32</languageToolchainVersion>
         <platform>3</platform>
