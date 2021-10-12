@@ -2,18 +2,6 @@
 
 #include <xc.h>
 
-void configureACPins(void)
-{
-    //Set as analog input (PD3)
-    PORTD.DIRCLR = PIN3_bm;
-    
-    //Disable Digital Input Buffer
-    PORTD.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
-    
-    //Enable Output Buffer (PA7)
-    PORTA.DIRSET = PIN7_bm;
-}
-
 void AC_init(void)
 {
     //Select DACREF Source (1.024V)

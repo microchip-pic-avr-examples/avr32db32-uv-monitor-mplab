@@ -25,7 +25,7 @@ void TCD_init(void)
     TCD0.CMPACLR = 4;
     
     //25% duty cycle for LEDs
-    TCD0.CMPBSET = 0;
+    TCD0.CMPBSET = 30;
     
     //Ready the Peripheral
     TCD0.STATUS = TCD_ENRDY_bm;

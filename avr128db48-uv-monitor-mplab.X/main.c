@@ -62,7 +62,7 @@ FUSES = {
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
 int main(void)
-{
+{   
     //Init Peripherals
     initPeripherals();
     
@@ -81,15 +81,11 @@ int main(void)
     uint8_t count = 1;
     
     while (1)
-    {        
-        //calculateUVIndex();
-        IO_setLEDs(count);
+    {   
+        calculateUVIndex();
+        //IO_setLEDs(count);
         count++;
-        
-        if (count == 9)
-            count = 0;
-        
-        asm ("NOP");
+                
         for (uint32_t i = 0; i < 250000; ++i) { ; }                
     }
 }

@@ -3,7 +3,7 @@
 #include <xc.h>
 
 void OPAMP_init(void)
-{
+{    
     //Enable Run in Debug
     OPAMP.DBGCTRL = OPAMP_DBGRUN_bm;
     

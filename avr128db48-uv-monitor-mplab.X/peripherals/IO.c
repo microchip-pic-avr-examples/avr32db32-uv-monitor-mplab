@@ -2,6 +2,7 @@
 #include "utility.h"
 #include "OPAMP/OPAMP.h"
 #include "DAC/DAC.h"
+#include "TCD/TCD.h"
 
 #include <xc.h>
 
@@ -17,13 +18,16 @@ void IO_init(void)
         PORTD.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
 
         //Enable Output Buffer (PA7)
-        PORTA.DIRSET = PIN7_bm;
+        //PORTA.DIRSET = PIN7_bm;
     }
     
     //CCL 
     {
         //Use Alt. Pin Location (PA6) for LUT0 Out
-        PORTMUX.CCLROUTEA = PORTMUX_LUT0_ALT1_gc;
+        //PORTMUX.CCLROUTEA = PORTMUX_LUT0_ALT1_gc;
+        
+        //Output is via EVOUTD (PD2)
+        PORTD.DIRSET = PIN2_bm;
     }
     
     //DAC 
@@ -35,22 +39,25 @@ void IO_init(void)
     
     //TCD (Debug Only)
     {
-        /*
-        //PA4 - PWM Output
-        PORTA.OUTCLR = PIN4_bm;
-        PORTA.DIRSET = PIN4_bm;
-
+        //Use PF0, PF1, PF2, PF3
+        PORTMUX.TCDROUTEA = PORTMUX_TCD0_ALT2_gc;
+        
+        //LED PWM Output
+        PORTF.OUTCLR = PIN1_bm;
+        PORTF.DIRSET = PIN1_bm;
+        _PROTECTED_WRITE(TCD0.FAULTCTRL, TCD_CMPBEN_bm);  
+        
+#ifndef DEBUG_PWM
+        
+        //PF0 - PWM Output (WOA). Debug Only
+        PORTF.OUTCLR = PIN0_bm;
+        PORTF.DIRSET = PIN0_bm;
+        
         //Enable WO-A
-        UNLOCK_CCP();
-        TCD0.FAULTCTRL = TCD_CMPAEN_bm;
-         */
+        _PROTECTED_WRITE(TCD0.FAULTCTRL, TCD_CMPAEN_bm | TCD_CMPBEN_bm);
+#endif  
         
-        //PA5 - LED Output
-        PORTA.OUTCLR = PIN5_bm;
-        PORTA.DIRSET = PIN5_bm;
-        
-        UNLOCK_CCP();
-        TCD0.FAULTCTRL |= TCD_CMPBEN_bm | TCD_CMPB_bm;
+         
     }
     
     //TWI 
@@ -70,23 +77,9 @@ void IO_init(void)
     
     //Discrete I/O 
     {
-        //LED0 on Nano (PB3)
-        PORTB.DIRSET = PIN3_bm;
-        
-        //Pushbutton on Nano (PB2)
-        PORTB.DIRCLR = PIN2_bm;
-       
-        //Falling Edge Interrupt and Pull-Up Resistor Enabled
-        PORTB.PIN2CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
-        
-        //Turn off all LEDs
-        IO_setLEDs(0x00);
-        
-        //LED Outputs (LSB -> MSB)
-        //PF4, PF5, PA2, PA3, PA0, PA1, PB2, PB3
-        PORTF.DIRSET |= PIN4_bm | PIN5_bm;
-        PORTA.DIRSET |= PIN0_bm | PIN1_bm | PIN2_bm | PIN3_bm;
-        PORTB.DIRSET |= PIN2_bm | PIN3_bm;
+        //PORTA is the output
+        PORTA.DIRSET = PIN0_bm | PIN1_bm | PIN2_bm | PIN3_bm |
+                PIN4_bm | PIN5_bm | PIN6_bm | PIN7_bm;
     }
     
 }
@@ -94,6 +87,8 @@ void IO_init(void)
 //Enables the DAC + OPAMP and Starts the MVIO Port
 void MVIO_enable(void)
 {
+    return;
+    
     //Start DAC
     DAC_enable();
     
@@ -103,6 +98,8 @@ void MVIO_enable(void)
 
 void MVIO_disable(void)
 {
+    return;
+    
     //Turn off the OPAMP
     OPAMP_disableDACBuffer();
     
@@ -114,44 +111,6 @@ void IO_setLEDs(uint8_t value)
 {
     //LED Outputs (LSB -> MSB)
     //PF4, PF5, PA2, PA3, PA0, PA1, PB2, PB3
-    
-    if (value > 0)
-        PORTF.OUTCLR = PIN4_bm;
-    else
-        PORTF.OUTSET = PIN4_bm;
-    
-    if (value > 1)
-        PORTF.OUTCLR = PIN5_bm;
-    else
-        PORTF.OUTSET = PIN5_bm;
-    
-    if (value > 2)
-        PORTA.OUTCLR = PIN2_bm;
-    else
-        PORTA.OUTSET = PIN2_bm;
-    
-    if (value > 3)
-        PORTA.OUTCLR = PIN3_bm;
-    else
-        PORTA.OUTSET = PIN3_bm;
-    
-    if (value > 4)
-        PORTA.OUTCLR = PIN0_bm;
-    else
-        PORTA.OUTSET = PIN0_bm;
-    
-    if (value > 5)
-        PORTA.OUTCLR = PIN1_bm;
-    else
-        PORTA.OUTSET = PIN1_bm;
-    
-    if (value > 6)
-        PORTB.OUTCLR = PIN2_bm;
-    else
-        PORTB.OUTSET = PIN2_bm;
-    
-    if (value > 7)
-        PORTB.OUTCLR = PIN3_bm;
-    else
-        PORTB.OUTSET = PIN3_bm;
+    PORTA.OUTCLR = 0xFF;
+    PORTA.OUTSET = value;
 }

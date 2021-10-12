@@ -2,8 +2,6 @@
 
 #include <xc.h>
 
-
-
 //Initialize the DAC peripheral
 void DAC_init(void)
 {

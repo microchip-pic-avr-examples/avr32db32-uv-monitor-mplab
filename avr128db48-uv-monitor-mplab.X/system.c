@@ -23,7 +23,7 @@ void initPeripherals(void)
     
     //Init Device I/O 
     IO_init();
-    
+        
     //Init TCD
     TCD_init();
     
@@ -43,10 +43,10 @@ void initPeripherals(void)
     RTC_init();
             
     //Init DAC
-    DAC_init();
+    //DAC_init();
     
     //Init OPAMP(s)
-    OPAMP_init();
+    //OPAMP_init();
         
     //Init the TWI in host mode
     TWI_initHost();
