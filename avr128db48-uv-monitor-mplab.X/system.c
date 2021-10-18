@@ -13,8 +13,12 @@
 #include "peripherals/TWI/TWI.h"
 #include "peripherals/OPAMP/OPAMP.h"
 
+static volatile SYSTEM_EVENT event;
+
 void initPeripherals(void)
 {
+    event = SYSTEM_NONE;
+    
     //Setup CPU Clocks
     CLKCTRL_init();
     
@@ -50,4 +54,31 @@ void initPeripherals(void)
         
     //Init the TWI in host mode
     TWI_initHost();
+}
+
+void enterSleep(void)
+{   
+    //Turn off LEDs
+    IO_setLEDs(0x00);
+    
+    //Re-Enable IO Interrupts
+    IO_enableButtonInterrupts();
+    
+    //Enter Sleep
+    asm("SLEEP");
+}
+
+void setSystemEvent(SYSTEM_EVENT ev)
+{
+    event = ev;
+}
+
+SYSTEM_EVENT getSystemEvent(void)
+{
+    return event;
+}
+
+void clearSystemEvent(void)
+{
+    event = SYSTEM_NONE;
 }

@@ -11,8 +11,7 @@ extern "C" {
 #include <stdbool.h>
     
 //If defined, a SW Reset command is sent to LTR390 on Init
-//Redundant due to device power cycling, however.
-//#define SW_RESET  
+#define SW_RESET  
     
 //Window Factor
     

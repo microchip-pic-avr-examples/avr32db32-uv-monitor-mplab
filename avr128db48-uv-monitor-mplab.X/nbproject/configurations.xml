@@ -48,6 +48,7 @@
       <itemPath>LTR390.h</itemPath>
       <itemPath>LTR390_registers.h</itemPath>
       <itemPath>system.h</itemPath>
+      <itemPath>results.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -99,6 +100,7 @@
       <itemPath>main.c</itemPath>
       <itemPath>LTR390.c</itemPath>
       <itemPath>system.c</itemPath>
+      <itemPath>results.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

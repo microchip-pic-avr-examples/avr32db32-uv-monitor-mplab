@@ -13,6 +13,12 @@ extern "C" {
     //Turn on LEDs
     void IO_setLEDs(uint8_t value);
     
+    //Disable Falling Edge Interrupts from Buttons
+    void IO_disableButtonInterrupts(void);
+    
+    //Enable Falling Edge Interrupts from Buttons
+    void IO_enableButtonInterrupts(void);
+    
     //Enables the DAC + OPAMP to Power-Up the MVIO Port
     void MVIO_enable(void);
     

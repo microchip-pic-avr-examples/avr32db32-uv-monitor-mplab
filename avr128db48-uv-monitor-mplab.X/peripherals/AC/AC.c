@@ -11,9 +11,9 @@ void AC_init(void)
     AC1.MUXCTRL = AC_INVERT_bm | AC_INITVAL_LOW_gc | AC_MUXPOS_AINP1_gc | AC_MUXNEG_DACREF_gc;
     
     //Divider Ratio 1:11
-    //Set DACREF at ~45mV
+    //Set DACREF at ~450mV
     AC1.DACREF = 113;
     
-    //Enable output to pin (debug), slow response, med. hysteresis, Enable
-    AC1.CTRLA = AC_OUTEN_bm | AC_POWER_PROFILE2_gc | AC_HYSMODE_MEDIUM_gc | AC_ENABLE_bm;
+    //Slow response, med. hysteresis, Enable
+    AC1.CTRLA = AC_POWER_PROFILE2_gc | AC_HYSMODE_MEDIUM_gc | AC_ENABLE_bm;
 }

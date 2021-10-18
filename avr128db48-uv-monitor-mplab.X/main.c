@@ -48,6 +48,7 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include "peripherals/OPAMP/OPAMP.h"
 #include "peripherals/IO.h"
 #include "system.h"
+#include "results.h"
 
 FUSES = {
 	.WDTCFG = 0x00, // WDTCFG {PERIOD=OFF, WINDOW=OFF}
@@ -61,6 +62,27 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
+void handlePITEvent(void)
+{
+    //Handle Periodic Interrupt Timer Events
+    
+    //If waiting, advance state machine
+    if (getSystemEvent() == WAIT_UV)
+    {
+        setSystemEvent(TIMER_UV);
+    }
+    else if (getSystemEvent() == WAIT_TEMP)
+    {
+        setSystemEvent(TIMER_TEMP);
+    }
+    
+    //Adjust Power Supply
+    adjustPowerOutputISR();
+}
+
+//About 10 seconds
+#define BLINK_COUNT 40
+
 int main(void)
 {   
     //Init Peripherals
@@ -73,19 +95,84 @@ int main(void)
     adjustPowerOutputBlocking();
     
     //Connect the PIT Interrupt to the Power Adjustment Function
-    PIT_setISR(&adjustPowerOutputISR);
+    PIT_setISR(&handlePITEvent);
         
     //Enable Interrupts
     sei();
-        
-    uint8_t count = 1;
+    
+    //Init LTR390
+    initLTR390();
+         
+    uint8_t timeCount = 0;
     
     while (1)
     {   
-        calculateUVIndex();
-        //IO_setLEDs(count);
-        count++;
+        switch(getSystemEvent())
+        {
+            case SYSTEM_NONE:
+            {
+                enterSleep();
+                break;
+            }
+            case UV_MEAS:
+            {
+                //Measure UV and Update Display
+                UV_getAndDisplayResults();
                 
-        for (uint32_t i = 0; i < 250000; ++i) { ; }                
+                //Update State Machine
+                setSystemEvent(WAIT_UV);
+                break;
+            }
+            case TEMP_MEAS:
+            {
+                //TODO: Implement Temp Measurements
+                PORTA.OUTTGL = 0xFF;
+                
+                //Update State Machine
+                setSystemEvent(WAIT_TEMP);
+                break;
+            }
+            case WAIT_UV:
+            case WAIT_TEMP:
+            {
+                //Do Nothing (Wait for Event to Update)
+                break;
+            }
+            case TIMER_UV:
+            {
+                //Increment Counter
+                timeCount++;
+                
+                //If at duration limit, turn off display
+                if (timeCount == BLINK_COUNT)
+                {
+                    timeCount = 0;
+                    setSystemEvent(SYSTEM_NONE);
+                }
+                else
+                {
+                    setSystemEvent(UV_MEAS);
+                }
+                break;
+            }
+            case TIMER_TEMP:
+            {
+                //Increment Counter
+                timeCount++;
+                
+                //If at duration limit, turn off display
+                if (timeCount == BLINK_COUNT)
+                {
+                    timeCount = 0;
+                    setSystemEvent(SYSTEM_NONE);
+                }
+                else
+                {
+                    setSystemEvent(TEMP_MEAS);
+                }
+                
+                break;
+            }
+        }
     }
 }

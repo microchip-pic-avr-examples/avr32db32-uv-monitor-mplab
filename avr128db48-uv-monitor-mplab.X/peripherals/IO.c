@@ -3,6 +3,7 @@
 #include "OPAMP/OPAMP.h"
 #include "DAC/DAC.h"
 #include "TCD/TCD.h"
+#include "../system.h"
 
 #include <xc.h>
 
@@ -16,16 +17,10 @@ void IO_init(void)
 
         //Disable Digital Input Buffer
         PORTD.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
-
-        //Enable Output Buffer (PA7)
-        //PORTA.DIRSET = PIN7_bm;
     }
     
     //CCL 
     {
-        //Use Alt. Pin Location (PA6) for LUT0 Out
-        //PORTMUX.CCLROUTEA = PORTMUX_LUT0_ALT1_gc;
-        
         //Output is via EVOUTD (PD2)
         PORTD.DIRSET = PIN2_bm;
     }
@@ -33,11 +28,11 @@ void IO_init(void)
     //DAC 
     {
         //Configure Output Pin PD6 (Analog Output)
-        PORTD.DIRSET = PIN6_bm;
-        PORTD.PIN6CTRL = PORT_ISC_INPUT_DISABLE_gc;
+        //PORTD.DIRSET = PIN6_bm;
+        //PORTD.PIN6CTRL = PORT_ISC_INPUT_DISABLE_gc;
     }
     
-    //TCD (Debug Only)
+    //TCD
     {
         //Use PF0, PF1, PF2, PF3
         PORTMUX.TCDROUTEA = PORTMUX_TCD0_ALT2_gc;
@@ -55,9 +50,7 @@ void IO_init(void)
         
         //Enable WO-A
         _PROTECTED_WRITE(TCD0.FAULTCTRL, TCD_CMPAEN_bm | TCD_CMPBEN_bm);
-#endif  
-        
-         
+#endif      
     }
     
     //TWI 
@@ -75,13 +68,29 @@ void IO_init(void)
         PORTC.PINCTRLUPD = PIN2_bm | PIN3_bm;
     }
     
-    //Discrete I/O 
+    //LED I/O 
     {
-        //PORTA is the output
-        PORTA.DIRSET = PIN0_bm | PIN1_bm | PIN2_bm | PIN3_bm |
-                PIN4_bm | PIN5_bm | PIN6_bm | PIN7_bm;
+        //PORTA is LED Outputs
+        PORTA.DIRSET = 0xFF;
+        
+        //Turn off LEDs (active low)
+        PORTA.OUTSET = 0xFF;
     }
     
+    //Interrupt on Change I/O
+    {
+        //D6, D7 - Buttons
+        //D6 = UV Start
+        //D7 = Temp Start
+        
+        PORTD.DIRCLR = PIN6_bm | PIN7_bm;
+        
+        //Pull-up Enabled, Falling Edge Triggered
+        PORTD.PIN6CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
+        
+        //Pull-up Enabled, Falling Edge Triggered
+        PORTD.PIN7CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
+    }
 }
 
 //Enables the DAC + OPAMP and Starts the MVIO Port
@@ -110,7 +119,44 @@ void MVIO_disable(void)
 void IO_setLEDs(uint8_t value)
 {
     //LED Outputs (LSB -> MSB)
-    //PF4, PF5, PA2, PA3, PA0, PA1, PB2, PB3
-    PORTA.OUTCLR = 0xFF;
-    PORTA.OUTSET = value;
+    //Port A
+    PORTA.OUTSET = 0xFF;
+    PORTA.OUTCLR = value;
+}
+
+//Disable Rising Edge Interrupts from Buttons
+void IO_disableButtonInterrupts(void)
+{
+    PORTD.PIN6CTRL &= ~PORT_ISC_gm;
+    PORTD.PIN7CTRL &= ~PORT_ISC_gm;
+}
+
+//Enable Rising Edge Interrupts from Buttons
+void IO_enableButtonInterrupts(void)
+{
+    PORTD.PIN6CTRL |= PORT_ISC_FALLING_gc;
+    PORTD.PIN7CTRL |= PORT_ISC_FALLING_gc;
+}
+
+void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)
+{
+    //Disable IO Interrupts
+    IO_disableButtonInterrupts();
+    
+    //Only 1 measurement is active at a time. Prioritize UV over Temp
+    //Start in the Wait State to sync the state machine with the RTC
+    if (PORTD.INTFLAGS & PIN6_bm)
+    {
+        //PD6 pressed 
+        setSystemEvent(WAIT_UV);
+    }
+    else if (PORTD.INTFLAGS & PIN7_bm)
+    {
+        //PD7 pressed 
+        setSystemEvent(WAIT_TEMP);
+    }
+        
+    //Clear all flags
+    PORTD.INTFLAGS = PIN6_bm | PIN7_bm;
+    
 }

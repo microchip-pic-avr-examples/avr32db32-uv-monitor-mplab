@@ -31,7 +31,7 @@ void RTC_init(void)
     //Enable the PIT Interrupt
     RTC.PITINTCTRL = RTC_PI_bm;
     
-    //PIT triggers every 250ms, Enable the PIT
+    //PIT triggers (about) every 250ms, Enable the PIT
     RTC.PITCTRLA = RTC_PERIOD_CYC256_gc | RTC_PITEN_bm;
     
     //Enable RTC
