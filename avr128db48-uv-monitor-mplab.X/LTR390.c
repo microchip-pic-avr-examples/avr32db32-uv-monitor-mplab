@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-bool initLTR390(void)
+bool LTR390_init(void)
 {
     bool ok;
     
@@ -91,7 +91,7 @@ bool LTR390_isConnected(void)
     return false;
 }
 
-uint8_t calculateUVIndex(void)
+uint8_t LTR390_calculateUVIndex(void)
 {
     uint8_t t_meas[3];
     bool ok = TWI_sendAndReadBytes(LTR390_ADDR, UVS_DATA_0, &t_meas[0], 3);

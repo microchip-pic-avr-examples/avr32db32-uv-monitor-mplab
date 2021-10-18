@@ -1,7 +1,5 @@
 #include "IO.h"
 #include "utility.h"
-#include "OPAMP/OPAMP.h"
-#include "DAC/DAC.h"
 #include "TCD/TCD.h"
 #include "../system.h"
 
@@ -17,6 +15,17 @@ void IO_init(void)
 
         //Disable Digital Input Buffer
         PORTD.PIN3CTRL = PORT_ISC_INPUT_DISABLE_gc;
+    }
+    
+    //ADC
+    {
+        //PD5 (AIN5)
+        
+        //Set PD5 as an input
+        PORTD.DIRCLR = PIN5_bm;
+        
+        //Disable Digital Input Buffer
+        PORTD.PIN5CTRL = PORT_ISC_INPUT_DISABLE_gc;
     }
     
     //CCL 
@@ -91,29 +100,6 @@ void IO_init(void)
         //Pull-up Enabled, Falling Edge Triggered
         PORTD.PIN7CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
     }
-}
-
-//Enables the DAC + OPAMP and Starts the MVIO Port
-void MVIO_enable(void)
-{
-    return;
-    
-    //Start DAC
-    DAC_enable();
-    
-    //Start OPAMP
-    OPAMP_enableDACBuffer();
-}
-
-void MVIO_disable(void)
-{
-    return;
-    
-    //Turn off the OPAMP
-    OPAMP_disableDACBuffer();
-    
-    //Turn off the DAC
-    DAC_disable();
 }
 
 void IO_setLEDs(uint8_t value)

@@ -23,7 +23,7 @@ extern "C" {
 #define UVI_SENSITIVITY 2300
     
     //Reset and Configure LTR-390 Sensor
-    bool initLTR390(void);
+    bool LTR390_init(void);
     
     //Set a register in the LTR390 
     bool LTR390_setRegister(LTR390_REGISTER reg, uint8_t config);
@@ -41,7 +41,7 @@ extern "C" {
     bool LTR390_isConnected(void);
     
     //Compute the UV Index of the Sensor
-    uint8_t calculateUVIndex(void);
+    uint8_t LTR390_calculateUVIndex(void);
     
 #ifdef	__cplusplus
 }

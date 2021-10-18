@@ -18,12 +18,6 @@ extern "C" {
     
     //Enable Falling Edge Interrupts from Buttons
     void IO_enableButtonInterrupts(void);
-    
-    //Enables the DAC + OPAMP to Power-Up the MVIO Port
-    void MVIO_enable(void);
-    
-    //Disables the DAC + OPAMP to Power-Down the MVIO Port
-    void MVIO_disable(void);
 
 #ifdef	__cplusplus
 }

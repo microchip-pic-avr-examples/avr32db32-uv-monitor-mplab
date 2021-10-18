@@ -39,16 +39,13 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include <avr/eeprom.h>
 
 #include "switcher.h"
-#include "peripherals/TWI/TWI.h"
-#include "peripherals/CLKCTRL/CLKCTRL.h"
-#include "peripherals/RTC/RTC.h"
 #include "LTR390.h"
-#include "peripherals/SLPCTRL/SLPCTRL.h"
-#include "peripherals/DAC/DAC.h"
-#include "peripherals/OPAMP/OPAMP.h"
-#include "peripherals/IO.h"
 #include "system.h"
 #include "results.h"
+
+#include "peripherals/RTC/RTC.h"
+#include "peripherals/ADC/ADC.h"
+#include "MCP9700.h"
 
 FUSES = {
 	.WDTCFG = 0x00, // WDTCFG {PERIOD=OFF, WINDOW=OFF}
@@ -101,8 +98,11 @@ int main(void)
     sei();
     
     //Init LTR390
-    initLTR390();
+    LTR390_init();
          
+    //Init Peripherals for MCP9700
+    MCP9700_init();
+    
     uint8_t timeCount = 0;
     
     while (1)
@@ -125,8 +125,8 @@ int main(void)
             }
             case TEMP_MEAS:
             {
-                //TODO: Implement Temp Measurements
-                PORTA.OUTTGL = 0xFF;
+                //Measure Temperature and Update Display
+                TEMP_getAndDisplayResults();
                 
                 //Update State Machine
                 setSystemEvent(WAIT_TEMP);

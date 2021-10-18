@@ -17,14 +17,8 @@
         <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
           <itemPath>peripherals/CLKCTRL/CLKCTRL.h</itemPath>
         </logicalFolder>
-        <logicalFolder name="f10" displayName="DAC" projectFiles="true">
-          <itemPath>peripherals/DAC/DAC.h</itemPath>
-        </logicalFolder>
         <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
           <itemPath>peripherals/EVSYS/EVSYS.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f11" displayName="OPAMP" projectFiles="true">
-          <itemPath>peripherals/OPAMP/OPAMP.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f8" displayName="RTC" projectFiles="true">
           <itemPath>peripherals/RTC/RTC.h</itemPath>
@@ -49,6 +43,7 @@
       <itemPath>LTR390_registers.h</itemPath>
       <itemPath>system.h</itemPath>
       <itemPath>results.h</itemPath>
+      <itemPath>MCP9700.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -70,14 +65,8 @@
         <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
           <itemPath>peripherals/CLKCTRL/CLKCTRL.c</itemPath>
         </logicalFolder>
-        <logicalFolder name="f10" displayName="DAC" projectFiles="true">
-          <itemPath>peripherals/DAC/DAC.c</itemPath>
-        </logicalFolder>
         <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
           <itemPath>peripherals/EVSYS/EVSYS.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f11" displayName="OPAMP" projectFiles="true">
-          <itemPath>peripherals/OPAMP/OPAMP.c</itemPath>
         </logicalFolder>
         <logicalFolder name="f8" displayName="RTC" projectFiles="true">
           <itemPath>peripherals/RTC/RTC.c</itemPath>
@@ -101,6 +90,7 @@
       <itemPath>LTR390.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>results.c</itemPath>
+      <itemPath>MCP9700.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

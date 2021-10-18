@@ -9,9 +9,8 @@
 #include "peripherals/EVSYS/EVSYS.h"
 #include "peripherals/TCB/TCB.h"
 #include "peripherals/RTC/RTC.h"
-#include "peripherals/DAC/DAC.h"
 #include "peripherals/TWI/TWI.h"
-#include "peripherals/OPAMP/OPAMP.h"
+#include "peripherals/ADC/ADC.h"
 
 static volatile SYSTEM_EVENT event;
 
@@ -37,6 +36,9 @@ void initPeripherals(void)
     //Init AC
     AC_init();
     
+    //Init ADC
+    ADC_init();
+    
     //Init the Event System
     EVSYS_init();
     
@@ -45,13 +47,7 @@ void initPeripherals(void)
     
     //Init RTC
     RTC_init();
-            
-    //Init DAC
-    //DAC_init();
-    
-    //Init OPAMP(s)
-    //OPAMP_init();
-        
+                
     //Init the TWI in host mode
     TWI_initHost();
 }
