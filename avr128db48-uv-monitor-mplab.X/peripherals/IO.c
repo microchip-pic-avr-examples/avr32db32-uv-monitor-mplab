@@ -134,12 +134,12 @@ void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)
     if (PORTD.INTFLAGS & PIN6_bm)
     {
         //PD6 pressed 
-        setSystemEvent(WAIT_UV);
+        setSystemEvent(UV_MEAS);
     }
     else if (PORTD.INTFLAGS & PIN7_bm)
     {
         //PD7 pressed 
-        setSystemEvent(WAIT_TEMP);
+        setSystemEvent(TEMP_MEAS);
     }
         
     //Clear all flags

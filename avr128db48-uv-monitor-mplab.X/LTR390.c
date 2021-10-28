@@ -22,13 +22,13 @@ bool LTR390_init(void)
     }
     
     //Wait a few moments - it takes some time for LTR390 to finish it's reset
-    for (uint32_t i = 0; i < 100; ++i) { ; }
+    for (uint32_t i = 0; i < 10000; ++i) { ; }
     
 #endif
     
-    //18-bit, 100ms Time
+    //20-bit, 500ms Sampling Time
     ok = LTR390_setRegister(ALS_UVS_MEAS_RATE, 
-            ALS_UVS_MEAS_RESOL_18BIT | ALS_UVS_MEAS_RATE_100MS);
+            ALS_UVS_MEAS_RESOL_20BIT | ALS_UVS_MEAS_RATE_500MS);
     
     if (!ok)
         return false;
@@ -93,14 +93,27 @@ bool LTR390_isConnected(void)
 
 uint8_t LTR390_calculateUVIndex(void)
 {
-    uint8_t t_meas[3];
-    bool ok = TWI_sendAndReadBytes(LTR390_ADDR, UVS_DATA_0, &t_meas[0], 3);
+    uint8_t t_meas[3], status;
+    bool ok;
+    
+    status = LTR390_getRegister(MAIN_STATUS);
+    
+    //If data is not ready
+    if (!((status & MAIN_STATUS_DATA_STATUS_bm) >> MAIN_STATUS_DATA_STATUS_bp))
+        return 0xFF;
+    
+    ok = TWI_sendAndReadBytes(LTR390_ADDR, UVS_DATA_0, &t_meas[0], 3);
     
     //If failed, - return bad value
     if (!ok)
         return 0xFF;
     
+    //Assemble the 20-bit Measurement
     uint32_t meas = ((uint32_t) t_meas[2] << 16) | ((uint16_t) t_meas[1] << 8) | t_meas[0];
+    
+    //UVI Seems to be off by 4, right shift by 2 to correct
+    meas <<= 2;
+    
     uint8_t result = 0x00;
     
 #ifdef WFAC

@@ -59,14 +59,23 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
+#define PIT_WAIT 4
+
 void handlePITEvent(void)
 {
+    static uint8_t UV_wait = 0;
     //Handle Periodic Interrupt Timer Events
     
     //If waiting, advance state machine
     if (getSystemEvent() == WAIT_UV)
     {
-        setSystemEvent(TIMER_UV);
+        UV_wait++;
+        if (UV_wait >= PIT_WAIT)
+        {
+            setSystemEvent(TIMER_UV);
+            UV_wait = 0;
+        }
+            
     }
     else if (getSystemEvent() == WAIT_TEMP)
     {
@@ -78,7 +87,8 @@ void handlePITEvent(void)
 }
 
 //About 10 seconds
-#define BLINK_COUNT 40
+#define SAMPLES_UV 20
+#define SAMPLES_TEMP 20
 
 int main(void)
 {   
@@ -133,6 +143,10 @@ int main(void)
                 break;
             }
             case WAIT_UV:
+            {
+                //Do Nothing...
+                break;
+            }
             case WAIT_TEMP:
             {
                 //Do Nothing (Wait for Event to Update)
@@ -144,7 +158,7 @@ int main(void)
                 timeCount++;
                 
                 //If at duration limit, turn off display
-                if (timeCount == BLINK_COUNT)
+                if (timeCount == SAMPLES_UV)
                 {
                     timeCount = 0;
                     setSystemEvent(SYSTEM_NONE);
@@ -161,7 +175,7 @@ int main(void)
                 timeCount++;
                 
                 //If at duration limit, turn off display
-                if (timeCount == BLINK_COUNT)
+                if (timeCount == SAMPLES_TEMP)
                 {
                     timeCount = 0;
                     setSystemEvent(SYSTEM_NONE);

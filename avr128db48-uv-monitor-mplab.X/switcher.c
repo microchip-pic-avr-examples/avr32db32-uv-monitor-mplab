@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-//Min and Max Duty Cycle Counts
+//Min and Max Duty Cycle Counts (not percent)
 #define MIN_DUTY_CYCLE 1
 #define DEFAULT_DUTY_CYCLE 10
 #define MAX_DUTY_CYCLE 20
