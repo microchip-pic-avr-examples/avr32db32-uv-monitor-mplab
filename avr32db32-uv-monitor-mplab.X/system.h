@@ -10,7 +10,7 @@ extern "C" {
     } SYSTEM_EVENT;
     
     typedef enum {
-        SYSTEM_IDLE = 0x00, UV_PWR_UP, TEMP_PWR_UP, TEMP_MEAS, UV_MEAS, SENSOR_OFF, SYSTEM_DISPLAY_RESULTS
+        SYSTEM_IDLE = 0x00, UV_PWR_UP, TEMP_PWR_UP, TEMP_MEAS, UV_MEAS, TEMP_WAIT, UV_WAIT, SENSOR_OFF
     } SYSTEM_STATE;
     
     void SYSTEM_initPeripherals(void);

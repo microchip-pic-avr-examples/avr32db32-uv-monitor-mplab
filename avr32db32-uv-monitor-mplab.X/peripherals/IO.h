@@ -13,6 +13,9 @@ extern "C" {
 #define IO_ENABLE_3V3() { PORTF.OUTSET = PIN2_bm; }
 #define IO_DISABLE_3V3() { PORTF.OUTCLR = PIN2_bm; }
     
+#define UV_BUTTON_GET_STATE() (VPORTD.IN & PIN6_bm)
+#define TEMP_BUTTON_GET_STATE() (VPORTD.IN & PIN7_bm)
+    
 //#define DEBUG_PWM
     
     //Configures Device I/O

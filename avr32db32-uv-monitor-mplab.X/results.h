@@ -22,13 +22,13 @@ extern "C" {
 #define UV_LEVEL7 10
     
 //Temperature Thresholds in C
-#define TEMP_LEVEL1 18
-#define TEMP_LEVEL2 21
-#define TEMP_LEVEL3 24
-#define TEMP_LEVEL4 27
-#define TEMP_LEVEL5 29
-#define TEMP_LEVEL6 32
-#define TEMP_LEVEL7 35
+#define TEMP_LEVEL1 10
+#define TEMP_LEVEL2 15
+#define TEMP_LEVEL3 20
+#define TEMP_LEVEL4 25
+#define TEMP_LEVEL5 30
+#define TEMP_LEVEL6 35
+#define TEMP_LEVEL7 40
         
     //Get the UVI and Update the Display
     void UV_getAndDisplayResults(void);

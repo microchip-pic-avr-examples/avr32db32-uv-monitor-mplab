@@ -46,7 +46,7 @@ void DISPLAY_turnOn(void)
 //Shows the display, but does not update values
 void DISPLAY_show(void)
 {
-    uint8_t LEDmask = 0x01;
+    uint8_t LEDmask = 0;
     
     //If at the max position of the LEDs
     if ((currentDisplay == displayMax) || (currentDisplay >= 8))
@@ -56,7 +56,7 @@ void DISPLAY_show(void)
     }
     
     //Set LED mask
-    LEDmask <<= currentDisplay;
+    //LEDmask <<= currentDisplay;
     
     //Show Maximum as a static display
     LEDmask |= (0b1 << displayMax);

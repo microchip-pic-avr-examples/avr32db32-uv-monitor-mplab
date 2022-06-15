@@ -64,8 +64,6 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
-#define UV_PIT_WAIT 4
-
 void handlePITEvent(void)
 {
 //    static uint8_t UV_wait = 0;
@@ -102,9 +100,10 @@ void oneSecondTick(void)
     DISPLAY_updateAnimation();
 }
 
-//About 10 seconds
-#define SAMPLES_UV 20
-#define SAMPLES_TEMP 20
+//Timings
+#define PERIOD_RTC_QS 64
+#define PERIOD_RTC_1S 256
+#define PERIOD_RTC_10S 2560
 
 int main(void)
 {   
@@ -120,7 +119,7 @@ int main(void)
     //Connect the PIT Interrupt to the Power Adjustment Function
     //RTC_setPITCallback(&handlePITEvent);
     
-    RTC_setOVFCallback(&oneSecondTick);
+    //RTC_setOVFCallback(&oneSecondTick);
         
     //Enable Interrupts
     sei();
@@ -130,8 +129,8 @@ int main(void)
     //Init Peripherals for MCP9700
     MCP9700_init();
         
-    //10s
-    SW_Timer_setPeriod(2560);
+    //1s Period
+    SW_Timer_setPeriod(PERIOD_RTC_QS);
         
     while (1)
     {   
@@ -149,18 +148,20 @@ int main(void)
                     SW_Timer_reset();
                     SYSTEM_clearSystemEvent();
                     
-                    DISPLAY_reset();
-                    DISPLAY_turnOn();
+//                    DISPLAY_reset();
+//                    DISPLAY_turnOn();
                 }
                 else if (SYSTEM_getSystemEvent() == UV_BUTTON)
                 {
                     state = UV_PWR_UP;
                     IO_ENABLE_3V3();
+                    
+                    SW_Timer_setPeriod(PERIOD_RTC_1S);
                     SW_Timer_reset();
                     SYSTEM_clearSystemEvent();
                     
-                    DISPLAY_reset();
-                    DISPLAY_turnOn();
+                    //DISPLAY_reset();
+                    //DISPLAY_turnOn();
                 }
                 break;
             }
@@ -171,7 +172,7 @@ int main(void)
                 //Warm-Up Done
                 if (SW_Timer_hasTriggered())
                 {
-                    DISPLAY_disableAnimation();
+                    DISPLAY_turnOn();
                     DISPLAY_reset();
                     
                     //Init LTR390
@@ -189,7 +190,7 @@ int main(void)
                 //Warm-Up Done
                 if (SW_Timer_hasTriggered())
                 {
-                    DISPLAY_disableAnimation();
+                    DISPLAY_turnOn();
                     DISPLAY_reset();
                     state = TEMP_MEAS;
                 }
@@ -200,7 +201,23 @@ int main(void)
             {
                 //Begin TEMP Measurement
                 TEMP_getAndDisplayResults();
-                state = SENSOR_OFF;
+                SW_Timer_reset();
+                state = TEMP_WAIT;
+                break;
+            }
+            case TEMP_WAIT:
+            {
+                if (SW_Timer_hasTriggered())
+                {
+                    if (TEMP_BUTTON_GET_STATE())
+                    {
+                        state = SENSOR_OFF;
+                    }
+                    else
+                    {
+                       state = TEMP_MEAS; 
+                    }
+                }
                 break;
             }
             case UV_MEAS:
@@ -208,8 +225,24 @@ int main(void)
                 //Begin UV Measurement
                 
                 UV_getAndDisplayResults();
-                
-                state = SENSOR_OFF;
+                SW_Timer_reset();
+                state = UV_WAIT;
+                break;
+            }
+            case UV_WAIT:
+            {
+                if (SW_Timer_hasTriggered())
+                {
+                    if (UV_BUTTON_GET_STATE())
+                    {
+                        state = SENSOR_OFF;
+                    }
+                    else
+                    {
+                        state = UV_MEAS;
+                    }
+                    
+                }
                 break;
             }
             case SENSOR_OFF:
@@ -220,29 +253,14 @@ int main(void)
                 IO_DISABLE_3V3();
                 IO_DISABLE_MCP9700();
                 
-                //Setup Display Animations
-                RTC_reset();
-                DISPLAY_enableAnimation();
+                DISPLAY_disableAnimation();
+                DISPLAY_turnOff();
                 
                 //Reset SW Timers
                 SW_Timer_reset();
                 
                 //Switch to state
-                state = SYSTEM_DISPLAY_RESULTS;
-                break;
-            }
-            case SYSTEM_DISPLAY_RESULTS:
-            {
-                //Animate Results
-                if (SW_Timer_hasTriggered())
-                {
-                    //Disable Animations / LEDs
-                    DISPLAY_disableAnimation();
-                    DISPLAY_turnOff();
-                    
-                    //Return to idle
-                    state = SYSTEM_IDLE;
-                }
+                state = SYSTEM_IDLE;
                 break;
             }
         }

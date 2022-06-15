@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include <avr/io.h>
+#include <avr/eeprom.h>
+
 bool LTR390_init(void)
 {
     bool ok;
@@ -115,10 +118,10 @@ uint8_t LTR390_calculateUVIndex(void)
         return 0xFF;
     
     //Assemble the 20-bit Measurement
-    uint32_t meas = ((uint32_t) t_meas[2] << 16) | ((uint16_t) t_meas[1] << 8) | t_meas[0];
-    
-    //UVI Seems to be off by 4, right shift by 2 to correct
-    //meas <<= 1;
+    uint32_t meas = ((uint32_t) t_meas[2] << 16) | ((uint32_t) t_meas[1] << 8) | t_meas[0];
+        
+    //UVI Seems to be off by 2, right shift to correct
+    meas >>= 1;
     
     uint8_t result = 0x00;
     

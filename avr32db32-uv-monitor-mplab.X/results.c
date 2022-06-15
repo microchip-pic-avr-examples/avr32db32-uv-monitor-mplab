@@ -1,3 +1,5 @@
+#include <avr/eeprom.h>
+
 #include "results.h"
 
 #include "peripherals/IO.h"
@@ -14,6 +16,11 @@ static const uint8_t TEMP_thresholds[] = {0, TEMP_LEVEL1, TEMP_LEVEL2, TEMP_LEVE
 
 void _displayOutline(uint8_t result, const uint8_t* thresholds)
 {
+    if (result == 0xFF)
+    {
+        DISPLAY_turnOff();
+    }
+    
     uint8_t output, index;
     
     //output = 0b1;
@@ -53,6 +60,7 @@ void UV_getAndDisplayResults(void)
 {
     uint8_t result = LTR390_calculateUVIndex();
         
+    
 #ifdef RESULT_DISPLAY_OUTLINE
     _displayOutline(result, &UV_thresholds[0]);
 #else
