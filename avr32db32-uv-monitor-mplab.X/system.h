@@ -13,12 +13,19 @@ extern "C" {
         SYSTEM_IDLE = 0x00, UV_PWR_UP, TEMP_PWR_UP, TEMP_MEAS, UV_MEAS, TEMP_WAIT, UV_WAIT, SENSOR_OFF
     } SYSTEM_STATE;
     
+    //Initialize Peripherals
     void SYSTEM_initPeripherals(void);
     
+    //Enter Sleep Mode
     void SYSTEM_enterSleep(void);
     
+    //Set a flag if an event occurs
     void SYSTEM_setSystemEvent(SYSTEM_EVENT ev);
+    
+    //Get the flag from an event
     SYSTEM_EVENT SYSTEM_getSystemEvent(void);
+    
+    //Clear the set flag
     void SYSTEM_clearSystemEvent(void);
     
 #ifdef	__cplusplus

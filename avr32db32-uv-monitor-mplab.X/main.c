@@ -51,6 +51,7 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include "display.h"
 #include "softwareTimer.h"
 #include "TCA0.h"
+#include "HTU21D.h"
 
 FUSES = {
 	.WDTCFG = 0x00, // WDTCFG {PERIOD=OFF, WINDOW=OFF}
@@ -144,6 +145,7 @@ int main(void)
                 {
                     state = TEMP_PWR_UP;
                     IO_ENABLE_MCP9700();
+                    IO_ENABLE_3V3();
                     
                     SW_Timer_reset();
                     SYSTEM_clearSystemEvent();
@@ -192,6 +194,7 @@ int main(void)
                 {
                     DISPLAY_turnOn();
                     DISPLAY_reset();
+                    HTU21D_init();
                     state = TEMP_MEAS;
                 }
                 
@@ -200,7 +203,7 @@ int main(void)
             case TEMP_MEAS:
             {
                 //Begin TEMP Measurement
-                TEMP_getAndDisplayResults();
+                HeatIndex_getAndDisplayResults();
                 SW_Timer_reset();
                 state = TEMP_WAIT;
                 break;
@@ -223,7 +226,6 @@ int main(void)
             case UV_MEAS:
             {
                 //Begin UV Measurement
-                
                 UV_getAndDisplayResults();
                 SW_Timer_reset();
                 state = UV_WAIT;

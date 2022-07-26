@@ -127,11 +127,11 @@ uint8_t LTR390_calculateUVIndex(void)
     
 #ifdef WFAC
     //If a Window Factor is defined...
-    result = ceil(((float)(meas / UVI_SENSITIVITY)) * WFAC);
+    result = round(((float)(meas / UVI_SENSITIVITY)) * WFAC);
     
 #else
     //Window Factor is undefined (assume WFAC = 1.0)
-    result = ceil(meas / UVI_SENSITIVITY);
+    result = round(meas / UVI_SENSITIVITY);
     
 #endif
     return result;
