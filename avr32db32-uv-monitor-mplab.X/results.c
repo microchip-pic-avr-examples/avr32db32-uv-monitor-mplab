@@ -24,14 +24,12 @@ void _displayOutline(uint8_t result, const uint8_t* thresholds)
         DISPLAY_turnOff();
     }
     
-    uint8_t output, index;
+    uint8_t index;
     
     //output = 0b1;
     index = 1;
     while ((index < 8) && (result >= thresholds[index]))
     {
-        //output = output << 1; 
-        //output |= (0b1 << index);
         index++;
     }
     
@@ -54,9 +52,10 @@ void UV_getAndDisplayResults(void)
 void TEMP_getAndDisplayResults(void)
 {
     uint8_t result = MCP9700_measureTemperature();
+    uint8_t tempF = ceil((result * 1.8) + 32);
     
     //Update Display
-    _displayOutline(result, &TEMP_thresholds[0]);
+    _displayOutline(tempF, &TEMP_thresholds[0]);
 }
 
 //Display the Heat Index and Update the Display

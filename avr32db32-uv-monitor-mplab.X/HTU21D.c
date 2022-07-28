@@ -1,5 +1,5 @@
 #include "HTU21D.h"
-#include "TWI0_host.h"
+#include "peripherals/TWI0_host.h"
 
 #include <stdbool.h>
 #include <stdint.h>

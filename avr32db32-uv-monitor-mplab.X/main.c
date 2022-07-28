@@ -43,14 +43,14 @@ Copyright (c) [2012-2020] Microchip Technology Inc.
 #include "system.h"
 #include "results.h"
 
-#include "RTC.h"
-#include "peripherals/ADC/ADC.h"
+#include "peripherals/RTC.h"
+#include "peripherals/ADC.h"
 #include "MCP9700.h"
-#include "peripherals/TCD/TCD.h"
+#include "peripherals/TCD.h"
 #include "peripherals/IO.h"
 #include "display.h"
 #include "softwareTimer.h"
-#include "TCA0.h"
+#include "peripherals/TCA0.h"
 #include "HTU21D.h"
 
 FUSES = {

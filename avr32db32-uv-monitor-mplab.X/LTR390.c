@@ -1,6 +1,6 @@
 #include "LTR390.h"
 #include "LTR390_registers.h"
-#include "TWI0_host.h"
+#include "peripherals/TWI0_host.h"
 
 #include <stdint.h>
 #include <stdbool.h>

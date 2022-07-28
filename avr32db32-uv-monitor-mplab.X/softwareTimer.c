@@ -6,7 +6,7 @@
 #include <avr/eeprom.h>
 #include <stdio.h>
 
-#include "RTC.h"
+#include "peripherals/RTC.h"
 
 //Last-time RTC was checked
 static uint16_t lTime = 0;

@@ -1,5 +1,3 @@
-#include "../utility.h"
-
 #include <xc.h>
 
 void EVSYS_init(void)

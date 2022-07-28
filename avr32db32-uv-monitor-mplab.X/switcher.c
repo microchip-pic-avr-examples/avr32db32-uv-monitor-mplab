@@ -1,9 +1,9 @@
 #include "switcher.h"
-#include "peripherals/TCD/TCD.h"
-#include "peripherals/AC/AC.h"
-#include "peripherals/CCL/CCL.h"
-#include "peripherals/EVSYS/EVSYS.h"
-#include "peripherals/TCB/TCB.h"
+#include "peripherals/TCD.h"
+#include "peripherals/AC.h"
+#include "peripherals/CCL.h"
+#include "peripherals/EVSYS.h"
+#include "peripherals/TCB.h"
 
 #include <xc.h>
 #include <stdint.h>

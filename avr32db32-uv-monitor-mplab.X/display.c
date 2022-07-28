@@ -1,7 +1,7 @@
 #include "display.h"
 #include "peripherals/IO.h"
-#include "RTC.h"
-#include "TCA0.h"
+#include "peripherals/RTC.h"
+#include "peripherals/TCA0.h"
 
 #include <stdint.h>
 #include <stdbool.h>

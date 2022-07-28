@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "peripherals/ADC/ADC.h"
+#include "peripherals/ADC.h"
 #include "peripherals/IO.h"
 
 //Configure the ADC to measure the output of the MCP9700
