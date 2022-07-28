@@ -65,42 +65,6 @@ FUSES = {
 
 LOCKBITS = 0x5CC5C55C; // {KEY=NOLOCK}
 
-void handlePITEvent(void)
-{
-//    static uint8_t UV_wait = 0;
-//    static uint8_t TEMP_wait = 0;
-//    //Handle Periodic Interrupt Timer Events
-//    
-//    //If waiting, advance state machine
-//    if (SYSTEM_getSystemEvent() == WAIT_UV)
-//    {
-//        UV_wait++;
-//        if (UV_wait >= UV_PIT_WAIT)
-//        {
-//            SYSTEM_setSystemEvent(TIMER_UV);
-//            UV_wait = 0;
-//        }
-//            
-//    }
-//    else if (SYSTEM_getSystemEvent() == WAIT_TEMP)
-//    {
-//        SYSTEM_setSystemEvent(TIMER_TEMP);
-//    }
-//    else if (SYSTEM_getSystemEvent() == POWER_UP_TEMP)
-//    {
-//        SYSTEM_setSystemEvent(TEMP_MEAS);
-//    }
-//    
-    //Adjust Power Supply
-    SWITCHER_adjustPowerOutputISR();
-}
-
-void oneSecondTick(void)
-{
-    
-    DISPLAY_updateAnimation();
-}
-
 //Timings
 #define PERIOD_RTC_QS 64
 #define PERIOD_RTC_1S 256
@@ -114,24 +78,23 @@ int main(void)
     //Configure the Boost
     SWITCHER_initBoost();
     
-    //On Power-Up, Adjust Duty Cycle
-    //SWITCHER_adjustPowerOutputBlocking();
+    //Current System State
+    SYSTEM_STATE state = SYSTEM_IDLE;
     
-    //Connect the PIT Interrupt to the Power Adjustment Function
-    //RTC_setPITCallback(&handlePITEvent);
+    if ((TEMP_BUTTON_IS_PRESSED()) || (UV_BUTTON_IS_PRESSED()))
+    {
+        //A button is being pressed!
+        state = SYSTEM_EVENT_ON_START;
+    }
     
-    //RTC_setOVFCallback(&oneSecondTick);
-        
     //Enable Interrupts
     sei();
-    
-    SYSTEM_STATE state = SYSTEM_IDLE;
              
     //Init Peripherals for MCP9700
     MCP9700_init();
         
     //1s Period
-    SW_Timer_setPeriod(PERIOD_RTC_QS);
+    SW_Timer_setPeriod(PERIOD_RTC_1S);
         
     while (1)
     {   
@@ -149,21 +112,42 @@ int main(void)
                     
                     SW_Timer_reset();
                     SYSTEM_clearSystemEvent();
-                    
-//                    DISPLAY_reset();
-//                    DISPLAY_turnOn();
                 }
                 else if (SYSTEM_getSystemEvent() == UV_BUTTON)
                 {
                     state = UV_PWR_UP;
                     IO_ENABLE_3V3();
                     
-                    SW_Timer_setPeriod(PERIOD_RTC_1S);
                     SW_Timer_reset();
                     SYSTEM_clearSystemEvent();
+                }
+                break;
+            }
+            case SYSTEM_EVENT_ON_START:
+            {
+                //This state only happens if the user is holding a button on startup
+                if (TEMP_BUTTON_IS_PRESSED())
+                {
+                    state = TEMP_PWR_UP;
+                    IO_ENABLE_MCP9700();
+                    IO_ENABLE_3V3();
                     
-                    //DISPLAY_reset();
-                    //DISPLAY_turnOn();
+                    SW_Timer_reset();
+                    SYSTEM_clearSystemEvent();
+                }
+                else if (UV_BUTTON_IS_PRESSED())
+                {
+                    state = UV_PWR_UP;
+                    IO_ENABLE_3V3();
+                    
+                    SW_Timer_reset();
+                    SYSTEM_clearSystemEvent();
+                }
+                else
+                {
+                    //Nothing happened
+                    state = SYSTEM_IDLE;
+                    SYSTEM_clearSystemEvent();
                 }
                 break;
             }
@@ -178,9 +162,14 @@ int main(void)
                     DISPLAY_reset();
                     
                     //Init LTR390
-                    LTR390_init();
-                    
-                    state = UV_MEAS;
+                    if (LTR390_init())
+                    {
+                        state = UV_MEAS;
+                    }
+                    else
+                    {
+                        state = SENSOR_OFF;
+                    }
                 }
                 
                 break;
@@ -194,8 +183,14 @@ int main(void)
                 {
                     DISPLAY_turnOn();
                     DISPLAY_reset();
-                    HTU21D_init();
-                    state = TEMP_MEAS;
+                    if (HTU21D_init())
+                    {
+                        state = TEMP_MEAS;
+                    }
+                    else
+                    {
+                        state = SENSOR_OFF;
+                    }
                 }
                 
                 break;
@@ -212,13 +207,13 @@ int main(void)
             {
                 if (SW_Timer_hasTriggered())
                 {
-                    if (TEMP_BUTTON_GET_STATE())
+                    if (TEMP_BUTTON_IS_PRESSED())
                     {
                         state = SENSOR_OFF;
                     }
                     else
                     {
-                       state = TEMP_MEAS; 
+                        state = TEMP_MEAS; 
                     }
                 }
                 break;
@@ -235,7 +230,7 @@ int main(void)
             {
                 if (SW_Timer_hasTriggered())
                 {
-                    if (UV_BUTTON_GET_STATE())
+                    if (UV_BUTTON_IS_PRESSED())
                     {
                         state = SENSOR_OFF;
                     }
@@ -249,7 +244,7 @@ int main(void)
             }
             case SENSOR_OFF:
             {
-                //Turn-off unnecessary parts
+                //Turn-off sensors
                 
                 //Power off UV and TEMP
                 IO_DISABLE_3V3();
@@ -268,74 +263,6 @@ int main(void)
         }
         
         //Update the SW Timer
-        SW_Timer_addTime();
-        
-        /*switch(getSystemEvent())
-        {
-            case SYSTEM_NONE:
-            {
-                enterSleep();
-                break;
-            }
-            case UV_MEAS:
-            {
-                //Measure UV and Update Display
-                UV_getAndDisplayResults();
-                
-                //Update State Machine
-                setSystemEvent(WAIT_UV);
-                break;
-            }
-            case TEMP_MEAS:
-            {
-                //Measure Temperature and Update Display
-                TEMP_getAndDisplayResults();
-                
-                //Update State Machine
-                setSystemEvent(WAIT_TEMP);
-                break;
-            }
-            case POWER_UP_TEMP:
-            case WAIT_UV:
-            case WAIT_TEMP:
-            {
-                //Do Nothing...
-                break;
-            }
-            case TIMER_UV:
-            {
-                //Increment Counter
-                timeCount++;
-                
-                //If at duration limit, turn off display
-                if (timeCount == SAMPLES_UV)
-                {
-                    timeCount = 0;
-                    setSystemEvent(SYSTEM_NONE);
-                }
-                else
-                {
-                    setSystemEvent(UV_MEAS);
-                }
-                break;
-            }
-            case TIMER_TEMP:
-            {
-                //Increment Counter
-                timeCount++;
-                
-                //If at duration limit, turn off display
-                if (timeCount == SAMPLES_TEMP)
-                {
-                    timeCount = 0;
-                    setSystemEvent(SYSTEM_NONE);
-                }
-                else
-                {
-                    setSystemEvent(TEMP_MEAS);
-                }
-                break;
-            }
-        }*/
+        SW_Timer_addTime();        
     }
 }

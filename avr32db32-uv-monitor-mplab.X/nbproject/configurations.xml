@@ -5,38 +5,20 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="Peripherals" projectFiles="true">
-        <logicalFolder name="f5" displayName="AC" projectFiles="true">
-          <itemPath>peripherals/AC/AC.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f12" displayName="ADC" projectFiles="true">
-          <itemPath>peripherals/ADC/ADC.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f4" displayName="CCL" projectFiles="true">
-          <itemPath>peripherals/CCL/CCL.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
-          <itemPath>peripherals/CLKCTRL/CLKCTRL.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
-          <itemPath>peripherals/EVSYS/EVSYS.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f9" displayName="SLPCTRL" projectFiles="true">
-          <itemPath>peripherals/SLPCTRL/SLPCTRL.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f6" displayName="TCB" projectFiles="true">
-          <itemPath>peripherals/TCB/TCB.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f1" displayName="TCD" projectFiles="true">
-          <itemPath>peripherals/TCD/TCD.h</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f2" displayName="TWI" projectFiles="true">
-          <itemPath>TWI0_host.h</itemPath>
-        </logicalFolder>
         <itemPath>peripherals/utility.h</itemPath>
         <itemPath>peripherals/IO.h</itemPath>
         <itemPath>RTC.h</itemPath>
         <itemPath>TCA0.h</itemPath>
         <itemPath>MVIO.h</itemPath>
+        <itemPath>peripherals/TCD/TCD.h</itemPath>
+        <itemPath>peripherals/TCB/TCB.h</itemPath>
+        <itemPath>TWI0_host.h</itemPath>
+        <itemPath>peripherals/SLPCTRL/SLPCTRL.h</itemPath>
+        <itemPath>peripherals/AC/AC.h</itemPath>
+        <itemPath>peripherals/ADC/ADC.h</itemPath>
+        <itemPath>peripherals/CCL/CCL.h</itemPath>
+        <itemPath>peripherals/CLKCTRL/CLKCTRL.h</itemPath>
+        <itemPath>peripherals/EVSYS/EVSYS.h</itemPath>
       </logicalFolder>
       <itemPath>switcher.h</itemPath>
       <itemPath>LTR390.h</itemPath>
@@ -57,36 +39,18 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="f1" displayName="Peripherals" projectFiles="true">
-        <logicalFolder name="f5" displayName="AC" projectFiles="true">
-          <itemPath>peripherals/AC/AC.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f12" displayName="ADC" projectFiles="true">
-          <itemPath>peripherals/ADC/ADC.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f4" displayName="CCL" projectFiles="true">
-          <itemPath>peripherals/CCL/CCL.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f3" displayName="CLKCTRL" projectFiles="true">
-          <itemPath>peripherals/CLKCTRL/CLKCTRL.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f7" displayName="EVSYS" projectFiles="true">
-          <itemPath>peripherals/EVSYS/EVSYS.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f9" displayName="SLPCTRL" projectFiles="true">
-          <itemPath>peripherals/SLPCTRL/SLPCTRL.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f6" displayName="TCB" projectFiles="true">
-          <itemPath>peripherals/TCB/TCB.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f1" displayName="TCD" projectFiles="true">
-          <itemPath>peripherals/TCD/TCD.c</itemPath>
-        </logicalFolder>
-        <logicalFolder name="f2" displayName="TWI" projectFiles="true">
-          <itemPath>TWI0_host.c</itemPath>
-        </logicalFolder>
         <itemPath>peripherals/IO.c</itemPath>
         <itemPath>RTC.c</itemPath>
         <itemPath>TCA0.c</itemPath>
+        <itemPath>peripherals/SLPCTRL/SLPCTRL.c</itemPath>
+        <itemPath>peripherals/TCB/TCB.c</itemPath>
+        <itemPath>peripherals/TCD/TCD.c</itemPath>
+        <itemPath>TWI0_host.c</itemPath>
+        <itemPath>peripherals/EVSYS/EVSYS.c</itemPath>
+        <itemPath>peripherals/CLKCTRL/CLKCTRL.c</itemPath>
+        <itemPath>peripherals/CCL/CCL.c</itemPath>
+        <itemPath>peripherals/ADC/ADC.c</itemPath>
+        <itemPath>peripherals/AC/AC.c</itemPath>
       </logicalFolder>
       <itemPath>switcher.c</itemPath>
       <itemPath>main.c</itemPath>

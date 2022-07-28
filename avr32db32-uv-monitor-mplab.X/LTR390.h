@@ -22,7 +22,7 @@ extern "C" {
 //18-bits, 18x gain (see data sheet)
 #define UVI_SENSITIVITY 2300
     
-    //Reset and Configure LTR-390 Sensor
+    //Reset and Configure LTR-390 Sensor in UV Mode
     bool LTR390_init(void);
     
     //Set a register in the LTR390 

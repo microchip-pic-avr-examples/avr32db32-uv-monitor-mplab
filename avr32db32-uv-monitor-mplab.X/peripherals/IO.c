@@ -99,10 +99,10 @@ void IO_init(void)
         PORTD.DIRCLR = PIN6_bm | PIN7_bm;
         
         //Pull-up Enabled, Falling Edge Triggered
-        PORTD.PIN6CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
+        PORTD.PIN6CTRL = PORT_INVEN_bm | PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
         
         //Pull-up Enabled, Falling Edge Triggered
-        PORTD.PIN7CTRL = PORT_PULLUPEN_bm | PORT_ISC_FALLING_gc;
+        PORTD.PIN7CTRL = PORT_INVEN_bm | PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
     }
 }
 
@@ -124,8 +124,8 @@ void IO_disableButtonInterrupts(void)
 //Enable Rising Edge Interrupts from Buttons
 void IO_enableButtonInterrupts(void)
 {
-    PORTD.PIN6CTRL |= PORT_ISC_FALLING_gc;
-    PORTD.PIN7CTRL |= PORT_ISC_FALLING_gc;
+    PORTD.PIN6CTRL |= PORT_ISC_RISING_gc;
+    PORTD.PIN7CTRL |= PORT_ISC_RISING_gc;
 }
 
 void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)

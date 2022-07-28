@@ -7,11 +7,6 @@ extern "C" {
 
 #include <stdint.h>
     
-//#define RESULT_DISPLAY_SOLID
-#define RESULT_DISPLAY_OUTLINE
-
-//Note: LV0 is 0 
-    
 //UV Index Thresholds
 #define UV_LEVEL1 1
 #define UV_LEVEL2 2

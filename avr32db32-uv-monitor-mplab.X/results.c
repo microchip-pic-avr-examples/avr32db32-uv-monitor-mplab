@@ -40,53 +40,30 @@ void _displayOutline(uint8_t result, const uint8_t* thresholds)
     
     //Update display
     DISPLAY_setMaxPosition(index);
-    //IO_setLEDs(output);
 }
-
-void _displaySolid(uint8_t result, const uint8_t* thresholds)
-{
-    uint8_t output, index;
-    
-    output = 0b0;
-    index = 0;
-    while ((index < 8) && (result >= thresholds[index]))
-    {
-        output |= (0b1 << index);
-        index++;
-    }
-    
-    IO_setLEDs(output);
-}
-
 
 void UV_getAndDisplayResults(void)
 {
     uint8_t result = LTR390_calculateUVIndex();
-        
-    
-#ifdef RESULT_DISPLAY_OUTLINE
+
+    //Update Display
     _displayOutline(result, &UV_thresholds[0]);
-#else
-    _displaySolid(result, &UV_thresholds[0]);
-#endif
+
 }
 
 void TEMP_getAndDisplayResults(void)
 {
     uint8_t result = MCP9700_measureTemperature();
     
-#ifdef RESULT_DISPLAY_OUTLINE
+    //Update Display
     _displayOutline(result, &TEMP_thresholds[0]);
-#else
-    _displaySolid(result, &UV_thresholds[0]);
-#endif
 }
 
 //Display the Heat Index and Update the Display
 void HeatIndex_getAndDisplayResults(void)
 {
     uint8_t RH = HTU21D_getHumidityMeasurement();
-    uint8_t tempC = MCP9700_measureTemperature();
+    int8_t tempC = HTU21D_getTempMeasurementInt(); //MCP9700_measureTemperature();
     
     //Convert to F
     uint8_t tempF = ceil((tempC * 1.8) + 32);
@@ -140,5 +117,6 @@ void HeatIndex_getAndDisplayResults(void)
         result = hIndex[row][col];
     }
     
+    //Update Display
     _displayOutline(result, &TEMP_thresholds[0]);
 }
