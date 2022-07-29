@@ -77,25 +77,32 @@ int main(void)
     
     //Configure the Boost
     SWITCHER_initBoost();
-    
+        
     //Current System State
-    SYSTEM_STATE state = SYSTEM_IDLE;
+    SYSTEM_STATE state;
+    
+    //Enable IOC
+    IO_enableButtonInterrupts();
+    
+    //Enable Interrupts
+    sei();
+    
+    //Init Peripherals for MCP9700
+    MCP9700_init();
+        
+    //1s Period
+    SW_Timer_setPeriod(PERIOD_RTC_1S);
     
     if ((TEMP_BUTTON_IS_PRESSED()) || (UV_BUTTON_IS_PRESSED()))
     {
         //A button is being pressed!
         state = SYSTEM_EVENT_ON_START;
     }
+    else
+    {
+        state = SYSTEM_IDLE;
+    }
     
-    //Enable Interrupts
-    sei();
-             
-    //Init Peripherals for MCP9700
-    MCP9700_init();
-        
-    //1s Period
-    SW_Timer_setPeriod(PERIOD_RTC_1S);
-        
     while (1)
     {   
         switch (state)
@@ -158,8 +165,8 @@ int main(void)
                 //Warm-Up Done
                 if (SW_Timer_hasTriggered())
                 {
-                    DISPLAY_turnOn();
                     DISPLAY_reset();
+                    DISPLAY_turnOn();
                     
                     //Init LTR390
                     if (LTR390_init())
@@ -181,8 +188,9 @@ int main(void)
                 //Warm-Up Done
                 if (SW_Timer_hasTriggered())
                 {
-                    DISPLAY_turnOn();
                     DISPLAY_reset();
+                    DISPLAY_turnOn();
+                    
                     if (HTU21D_init())
                     {
                         state = TEMP_MEAS;
@@ -253,11 +261,28 @@ int main(void)
                 DISPLAY_disableAnimation();
                 DISPLAY_turnOff();
                 
-                //Reset SW Timers
+                //Debounce Time = 250ms (1/4s)
+                SW_Timer_setPeriod(PERIOD_RTC_QS);
+                
+                //Reset SW Timer
                 SW_Timer_reset();
                 
                 //Switch to state
-                state = SYSTEM_IDLE;
+                state = SYSTEM_DEBOUNCE;
+                break;
+            }
+            case SYSTEM_DEBOUNCE:
+            {
+                if ((TEMP_BUTTON_IS_PRESSED()) || (UV_BUTTON_IS_PRESSED()))
+                {
+                    SW_Timer_reset();
+                }
+                if (SW_Timer_hasTriggered())
+                {    
+                    //Timer is done - return to sleep
+                    SW_Timer_setPeriod(PERIOD_RTC_1S);
+                    state = SYSTEM_IDLE;
+                }
                 break;
             }
         }

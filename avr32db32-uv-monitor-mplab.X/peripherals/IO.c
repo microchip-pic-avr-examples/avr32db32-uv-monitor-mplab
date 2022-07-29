@@ -97,11 +97,11 @@ void IO_init(void)
         
         PORTD.DIRCLR = PIN6_bm | PIN7_bm;
         
-        //Pull-up Enabled, Falling Edge Triggered
-        PORTD.PIN6CTRL = PORT_INVEN_bm | PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+        //Inverted Levels, TTL, Pull-ups
+        PORTD.PIN6CTRL = PORT_INVEN_bm | PORT_INLVL_bm | PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;
         
-        //Pull-up Enabled, Falling Edge Triggered
-        PORTD.PIN7CTRL = PORT_INVEN_bm | PORT_PULLUPEN_bm | PORT_ISC_RISING_gc;
+        //Inverted Levels, TTL, Pull-ups
+        PORTD.PIN7CTRL = PORT_INVEN_bm | PORT_INLVL_bm | PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc;  
     }
 }
 
@@ -116,15 +116,21 @@ void IO_setLEDs(uint8_t value)
 //Disable Rising Edge Interrupts from Buttons
 void IO_disableButtonInterrupts(void)
 {
-    PORTD.PIN6CTRL &= ~PORT_ISC_gm;
-    PORTD.PIN7CTRL &= ~PORT_ISC_gm;
+    PORTD.PINCONFIG = PIN6_bm | PIN7_bm;
+    PORTD.PINCTRLCLR = PORT_ISC_RISING_gc;
 }
 
 //Enable Rising Edge Interrupts from Buttons
 void IO_enableButtonInterrupts(void)
 {
-    PORTD.PIN6CTRL |= PORT_ISC_RISING_gc;
-    PORTD.PIN7CTRL |= PORT_ISC_RISING_gc;
+    //Clear any pending flags
+    PORTD.INTFLAGS = PIN6_bm | PIN7_bm;
+    
+    IO_disableButtonInterrupts();
+
+    //Re-enable
+    PORTD.PINCONFIG = PIN6_bm | PIN7_bm;
+    PORTD.PINCTRLSET = PORT_ISC_RISING_gc;
 }
 
 void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)
@@ -132,8 +138,6 @@ void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)
     //Disable IO Interrupts
     IO_disableButtonInterrupts();
     
-    //Only 1 measurement is active at a time. Prioritize UV over Temp
-    //Start in the Wait State to sync the state machine with the RTC
     if (PORTD.INTFLAGS & PIN6_bm)
     {
         //PD6 pressed 
@@ -142,12 +146,9 @@ void __interrupt(PORTD_PORT_vect_num) _PinIOC(void)
     else if (PORTD.INTFLAGS & PIN7_bm)
     {
         //PD7 pressed 
-
-        //Set Update Event
         SYSTEM_setSystemEvent(TEMP_BUTTON);
     }
         
     //Clear all flags
     PORTD.INTFLAGS = PIN6_bm | PIN7_bm;
-    
 }

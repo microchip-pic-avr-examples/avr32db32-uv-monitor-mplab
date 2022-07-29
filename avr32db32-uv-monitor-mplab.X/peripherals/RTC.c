@@ -45,7 +45,7 @@ void RTC_init(void)
     RTC.CTRLA = RTC_PRESCALER_DIV128_gc | RTC_RTCEN_bm;
     
     //Enable PIT Interrupt
-    RTC.PITINTCTRL = RTC_PI_bm;
+    //RTC.PITINTCTRL = RTC_PI_bm;
         
     while (RTC.PITSTATUS & RTC_CTRLABUSY_bm);
     

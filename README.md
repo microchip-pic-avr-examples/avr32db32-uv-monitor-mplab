@@ -2,101 +2,144 @@
 
 [![MCHP](images/microchip.png)](https://www.microchip.com)
 
-# Batteryless UV Index (UVI) and Temperature Monitor with AVR128DB28
-This demo of the AVR DB family of MCUs implements a batteryless solar energy harvester to measure either the UV Index or the ambient temperature.
-
-## Related Documentation
+# Batteryless UV Index (UVI) and Heat Index Monitor with AVR32DB32
+This demo of the AVR&reg; DB family of MCUs implements a solar energy harvester to measure and display either the UV Index or the heat index. Multi-Voltage I/O (MVIO) is used to to communicate with 3.3V sensors, while the microcontroller runs at 5V. 
 
 ## Software Used
-- [MPLAB X IDE v5.50.0 or newer](#)
-- [MPLAB XC8 v2.32 or newer](#)
+- [MPLAB X IDE v6.0.0 or newer](#)
+- [MPLAB XC8 v2.40.0 or newer](#)
 
 ## Hardware Used
-- AVR128DB28
-- LTR390UV Sensor (or breakout from Adafruit)
-- MCP9700 Analog Temperature Sensor
+- See BOM for a complete list
+
+### Highlighted Hardware
+- AVR32DB32
+    - Microcontroller with Multi-Voltage I/O (MVIO)
+- MCP1711
+    - 3.3V Low Dropout (LDO) Voltage Regulator
+- MCP9700A
+    - Analog Output Temperature Sensor
+- LTR-390UV
+    - UV Sensor
+- HTU21D(F) 
+    - Temperature and Humidity Sensor (only humidity is used)
 
 ## Setup
 | Pin(s) | Function
 | ------ | ---------
 | PA0:7  | LED Bar Graph Display Output
 | PC0    | UART TX (3.3V)
-| PC1    | UART RX (3.3V)
+| PC1    | I2C nINT (3.3V)
 | PC2    | I2C SDA (3.3V)
 | PC3    | I2C SCL (3.3V)
-| PD1    | Measurement Active LED
+| PD1    | Debug GPIO (unused)
 | PD2    | Boost Converter PWM Out
 | PD3    | Boost Converter Analog Feedback
-| PD5    | Analog Temperature Output from MCP9700
+| PD4    | MCP9700A Analog Output (Temperature In)
+| PD5    | MCP9700A Power Output
 | PD6    | Start UV Measurement Button
-| PD7    | Start Temperature Measurement Button
+| PD7    | Start Heat Index Measurement Button
 | PF0    | (Debug Only) TCD-A PWM Output
 | PF1    | LED Drive PWM
+| PF2    | 3.3V Power Supply Enable
+| PF6    | nRESET
+| PF7    | UPDI
 
-### Voltage Levels
-AVR DB Supply: 5V  
+### Power Characteristics
+Maximum Input Voltage from Solar Panel: 5.5V   
+Minimum Startup Voltage: ??? V  
+
+AVR DB Main Supply Voltage: 5V (see note)  
 AVR DB MVIO Supply: 3.3V
 
+Warning: **Do not exceed maximum input ratings. This circuit cannot regulate voltages above 5V. Damage to the microcontroller and the circuit may occur if exceeded.**
+
+Note: *The 5V rail may vary depending on the amount of energy from the solar panel and the current load on the rail. The 3.3V rail is regulated by an LDO to ensure stable voltage levels.*
+
 ## Implementation
-**Warning: This demo is for educational use only. Please obtain accurate UV Index and Temperature measurements from a trusted source, such as the [National Oceanic and Atmospheric Administration (noaa.gov)](noaa.gov). Prolonged exposure to high temperatures can be life-threatening.**
+Warning: **This demo is for educational use only. Please obtain accurate UV Index and Heat Index information from a trusted source, such as the [National Oceanic and Atmospheric Administration (noaa.gov)](noaa.gov). Prolonged exposure to high temperatures can be life-threatening. Exposure to UV without appropriate precautions will also have health consequences.**
 
 ### Overview
-The heart of this program is an event driven state machine with the following states:
-```
-typedef enum {
-    SYSTEM_NONE = 0x00, UV_MEAS, TEMP_MEAS, WAIT_UV, WAIT_TEMP, TIMER_UV, TIMER_TEMP
-} SYSTEM_EVENT;
- ```  
 
-After initialization, the system starts in the `SYSTEM_NONE` state. This state puts the device into sleep mode. There are 2 ways to exit sleep mode in this program. The first is the Periodic Interrupt Timer (PIT) that approximately triggers every 250 ms. The PIT is used to periodically check and adjust (if necessary) the duty cycle of the boost converter. The second interrupt is from a falling edge on the pushbuttons. If a pushbutton is pressed, then the state machine will jump to `UV_MEAS` or `TEMP_MEAS`, depending on which button was pressed. To prevent re-triggering, I/O interrupts are also disabled. (They are re-enabled before sleep in the `SYSTEM_NONE` state).
-
-//TODO: State Diagram
 
 ### Solar Energy Harvester
-To generate the 5V supply for this demo, a simple boost converter was built using the Core Independent Peripherals (CIPs) on AVR DB. To run the boost, a 100 kHz PWM was created in the Timer/Counter D (TCD) peripheral on the device. The TCD output is then gated by the Analog Comparator (AC) via the logical AND inside of the Configurable Custom Logic (CCL). This configuration is shown below.
+To generate the 5V supply for this demo, a simple boost converter was built using the Core Independent Peripherals (CIPs) on the microcontroller. To run the boost, a 100 kHz PWM was created in the Timer/Counter D (TCD) peripheral on the device. The TCD output is then gated by the Analog Comparator (AC) via the logical AND inside of the Configurable Custom Logic (CCL). This configuration is shown below.
 
 //TODO: Add Figure
 
-This creates a regulating boost converter, but it does not correct for changing load conditions. To determine how loaded the regulator is, the number of output pulses is counted by TCB for a fixed number of generated TCD pulses (before the logic AND). This effectively creates a time delay of `PULSE_WAIT` (default: 1000 pulses, or 10 ms) to gather data.
+### Display Scale
 
-If the number of *skipped* pulses is 0, then the duty cycle needs to be increased by 1, up to `MAX_DUTY_CYCLE` (default: 20 cycles of TCD, or 50%).
+Heat Index and UVI share the same display, comprised of 8 LEDs in a row. The scale is copied below:
 
-If the number of *output* pulses is greater than `DC_REDUCE_THRESHOLD` (default: 90% of `PULSE_WAIT`), then the duty cycle needs to be decreased by 1, down to `MIN_DUTY_CYCLE` (default: 1 cycle of TCD, or 2.5%). **Note: `DC_REDUCE_THRESHOLD` uses the number of OUTPUT pulses, not skipped pulses.**
+| LED # | Heat Index | UV Index
+| ----- | ---------- | --------
+| 1     | 80F- | 1-
+| 2     | 85F | 2
+| 3     | 90F | 3
+| 4     | 95F | 4
+| 5     | 100F | 5
+| 6     | 105F | 6
+| 7     | 110F | 7
+| 8     | 115F+ | 8+
 
-If neither of these conditions occur, then the duty cycle is maintained with no changes.
+In the case of intermediate values (i.e.: 87F), the system rounds down.
 
-### UV Index Monitor
-For each measurement of the UV Index, there are 3 program states, as shown below:
+### UV Index (UVI)
 
-UV_MEAS &rarr; WAIT_UV &rarr; TIMER_UV  
+[Learn about the UV and UVI](https://www.epa.gov/sunsafety)
 
-The `UV_MEAS` state is the state where the result stored in the UV Sensor is retrieved, and the UV Index is calculated. The program updates the LED bar graph display with the following scale:
+To measure the UVI, an LTR-390UV sensor was used. This sensor measures the UV intensity and digitalizes it. 
 
-//TODO: Show Scale
+#### Sensor Error
 
-After updating the display, the program switches to the `WAIT_UV` state. The program remains in this state until the PIT occurs `PIT_WAIT` (default: 4) times. This ensures the sensor has new measurement data. From `WAIT_UV` the state machine goes to `TIMER_UV`. The `TIMER_UV` state counts the number of measurements performed since sleep. When the count is equal to `SAMPLES_UV` (default: 20), then the program is switched to the `SYSTEM_NONE` state.
+During development, we noticed that the LTR-390UV appears to be off by a factor of 2 when used with the settings recommended in the datasheet. The program corrects for this discrepency by right-shifting by 1.  
 
-### Temperature Monitor
-For each temperature measurement, there are 3 program states, as shown below.
+#### Testing
 
-TEMP_MEAS &rarr; WAIT_TEMP &rarr; TIMER_TEMP
+Since UVI is very time and positionally dependent, we used a commercial grade UV meter for reference against our results. The data from the LTR390-UV is not the exact UVI - it's specified &plusmn;1 UVI below values of 5, and &plusmn;20% when UVI is greater than 5. At UVI = 5, there is no specifiction, but a &plusmn;20% tolerance  = &plusmn;1 UVI. 
 
-The `TEMP_MEAS` state is when the analog output is measured by the ADC. The analog output is converted to the equivalent temperature, then used to update the bar graph display.
+More information can found in the [LTR-390UV datasheet](https://optoelectronics.liteon.com/upload/download/DS86-2015-0004/LTR-390UV_Final_%20DS_V1%201.pdf).
 
-//TODO: Show Scale
+### Heat Index
 
- The state machine then switches to the `WAIT_TEMP` state. This state is used to prevent the display from flickering from excessive updates. When the next PIT interrupt occurs, the state is moved to `TIMER_TEMP`. The `TIMER_TEMP` state keeps track of the number of temperature measurements since sleep. When the count is equal to `SAMPLES_TEMP` (default: 20), then the program returns to the `SYSTEM_NONE` state.
+[Learn about heat index](https://www.weather.gov/safety/heat-index)
 
-### LED Dimming
-To save power, the LEDs on the board are dimmed with PWM. Since the TCD is already generating a 100 kHz signal for the boost converter, the channel B of the TCD is reused as a PWM output for the LEDs with a duty cycle of 25%. The LEDs are turned on using the I/O in an active-LOW configuration.
+#### Measuring the Heat Index
 
-## Testing
+To measure the heat index, we used 2 sensors, an MCP9700A and an HTU21D(F) Temperature and Humidity sensor. The MCP9700A is an analog output temperature sensor while the HTU21D(F) measures humidity and temperature. For this project, we're using the MCP9700A for temperature and the humidity measurement from the HTU21D(F). 
+
+#### Conversion to Heat Index
+
+Once temperature and humidity are known, the microcontroller can calculate the heat index by using the reference table provided by NOAA. 
+
+![NOAA Heat Index](./images/heatindexchart-650.jpg)  
+
+Graphic: [https://www.weather.gov/ama/heatindex](https://www.weather.gov/ama/heatindex)
+
+Note: This graph is not subject to copyright protection.
+
+The values in the table were encoded into memory, with blank positions being marked with 255 to indicate out-of-scale. If the temperature or humidity was out-of-scale, the system ignores humidity and plots temperature only. 
+
+#### Accuracy
+
+Since the humidity sensor is temperature dependent, the values are not expected to be extremely accurate. Temperature correction for humidity was not applied. This is not an issue in this example, as the display only has 8 levels to show the heat index, and is not very precise. 
+
+**To reiterate, this demo is for educational use only. Please obtain heat index / UV Index from a trusted source.**
 
 ## Operating this Example
 
+### Programming
 
-## Other Notes
+To program the board, attach a UPDI programmer to the UPDI header, then apply power to the debug connector's +5V and GND point. 
+
+//TODO: Board Image Here!
+
+After applying power, the board can be programmed as normal.  
+
+### Using the System
+
+Pressing the TEMP or UV button while the system is idle while start monitoring the heat index or UV Index appropriately. Monitoring will continue until the same button is pressed and held. When the display turns off, the button can be released.
 
 ## Summary
 
-<!-- Summarize what the example has shown -->
+This application shows how to use a microcontroller as a small all-in-one solution for power management and data acquisition. 
