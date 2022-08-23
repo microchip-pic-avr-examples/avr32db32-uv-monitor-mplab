@@ -62,7 +62,7 @@ void TEMP_getAndDisplayResults(void)
 void HeatIndex_getAndDisplayResults(void)
 {
     uint8_t RH = HTU21D_getHumidityMeasurement();
-    int8_t tempC = HTU21D_getTempMeasurementInt(); //MCP9700_measureTemperature();
+    int8_t tempC = MCP9700_measureTemperature();
     
     //Convert to F
     uint8_t tempF = ceil((tempC * 1.8) + 32);

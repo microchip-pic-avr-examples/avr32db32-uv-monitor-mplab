@@ -18,6 +18,9 @@ void MCP9700_init(void)
 //Returns the temperature of the MCP9700 in Celsius 
 uint8_t MCP9700_measureTemperature(void)
 {    
+    //Select MCP9700A
+    ADC_setSamplingChannel(ADC_MUXPOS_AIN4_gc);
+    
     //Start measurement
     ADC_startConversion();
     

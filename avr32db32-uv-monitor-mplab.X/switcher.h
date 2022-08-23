@@ -9,18 +9,14 @@ extern "C" {
     
 //Number of pulses to wait
 #define PULSE_WAIT 1000
-    
-#define MAX_DC 20
-#define MIN_DC 1
         
+//Protects against a broken sense network. This sets the min. threshold for the network to be "good"
+//800 = 100mV * accumulation of 8
+//ADC is setup as 10-bit, 1.024VREF, 1mV per bit
+#define SWITCHER_SAFETY_MIN 800
+    
     //Start the Boost Converter
     void SWITCHER_initBoost(void);
-    
-    //Call this function to auto-adjust the duty cycle of the TCD. Blocking.
-    void SWITCHER_adjustPowerOutputBlocking(void);
-    
-    //Call this function periodically to adjust the duty cycle of the TCD. Non-Blocking.
-    void SWITCHER_adjustPowerOutputISR(void);
     
 #ifdef	__cplusplus
 }

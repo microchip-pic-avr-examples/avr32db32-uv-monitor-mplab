@@ -4,6 +4,7 @@
 #include "peripherals/CCL.h"
 #include "peripherals/EVSYS.h"
 #include "peripherals/TCB.h"
+#include "peripherals/ADC.h"
 
 #include <xc.h>
 #include <stdint.h>
@@ -22,6 +23,22 @@ const uint16_t DC_REDUCE_THRESHOLD = PULSE_WAIT * 0.90;
 
 void SWITCHER_initBoost(void)
 {   
+    //Select PD3 for Sampling
+    ADC_setSamplingChannel(ADC_MUXPOS_AIN3_gc);
+    
+    //Start ADC 
+    ADC_startConversion();
+    
+    //Wait...
+    while (ADC_isBusy());
+    
+    //Get Result
+    if (ADC_getAccumulation() < SWITCHER_SAFETY_MIN)
+    {
+        //Network appears broken!
+        return;
+    }
+    
     //Set # of pulses to measure
     TCB_setPulseTimeout(PULSE_WAIT);
     
@@ -30,144 +47,4 @@ void SWITCHER_initBoost(void)
     
     //Start TCD
     TCD_start();
-}
-
-void SWITCHER_adjustPowerOutputBlocking(void)
-{
-    //If # of TCD Pulses = # of Output Pulses, increase duty cycle
-    //If # of TCD Pulses < DC_REDUCE_THRESHOLD, decrease duty cycle
-    
-    uint16_t pulseCount;
-    uint16_t missed = 0;
-    
-    uint8_t timeout = 0;
-    
-    do
-    {
-        //Start Missed Pulse Counter
-        TCB_startOneShotCounters();
-
-        //Wait...
-        TCB_waitForPulses();
-
-        //Stop Counter
-        TCB_stopOutputCounter();
-
-        /* 
-         * In a VERY rare event, it might be possible for TCB0 to have
-         * double counted pulses (caused by a 2nd rising edge in the 
-         * middle of a cycle). 
-         * 
-         * To prevent against this, if TCB0 > PULSE_WAIT, then missed = 0
-         */
-        
-        //Get the counted pulse
-        pulseCount = TCB_getOutputPulses();
-
-        if (pulseCount < PULSE_WAIT)
-        {
-            missed = PULSE_WAIT - TCB_getOutputPulses();
-        }
-
-        if (missed == 0)
-        {
-            //Adjust DC up
-
-            if (TCD_getDutyCycle() < MAX_DUTY_CYCLE)
-            {
-                //Not at max value
-                TCD_incrementDutyCycle();
-                
-            }
-        }
-        else if (DC_REDUCE_THRESHOLD >= pulseCount)
-        {
-            //Adjust DC down
-
-            if (TCD_getDutyCycle() > MIN_DUTY_CYCLE)
-            {
-                //Not at min value
-                TCD_decrementDutyCycle();
-            }
-        }
-        else
-        {
-            //Everything is good
-            
-            return;
-        }
-        
-        //Sync Changes
-        TCD0.CTRLE = TCD_SYNC_bm;
-        
-        //Increment Timeout
-        timeout++;
-        
-    } while(timeout < TIMEOUT_LIMIT);
-    
-}
-
-void SWITCHER_adjustPowerOutputISR(void)
-{
-    //If # of TCD Pulses = # of Output Pulses, increase duty cycle
-    //If # of TCD Pulses < DC_REDUCE_THRESHOLD, decrease duty cycle
-    
-    uint16_t pulseCount;
-    uint16_t missed = 0;
-    
-    //Start Missed Pulse Counter
-    TCB_startOneShotCounters();
-
-    //Wait...
-    TCB_waitForPulses();
-
-    //Stop Counter
-    TCB_stopOutputCounter();
-
-    /* 
-     * In a VERY rare event, it might be possible for TCB0 to have
-     * double counted pulses (caused by a 2nd rising edge in the 
-     * middle of a cycle). 
-     * 
-     * To prevent against this, if TCB0 > PULSE_WAIT, then missed = 0
-     */
-
-    //Get the counted pulse
-    pulseCount = TCB_getOutputPulses();
-
-    if (pulseCount < PULSE_WAIT)
-    {
-        missed = PULSE_WAIT - TCB_getOutputPulses();
-    }
-
-    if (missed == 0)
-    {
-        //Adjust DC up
-
-        if (TCD_getDutyCycle() < MAX_DUTY_CYCLE)
-        {
-            //Not at max value
-            TCD_incrementDutyCycle();
-
-        }
-    }
-    else if (DC_REDUCE_THRESHOLD >= pulseCount)
-    {
-        //Adjust DC down
-
-        if (TCD_getDutyCycle() > MIN_DUTY_CYCLE)
-        {
-            //Not at min value
-            TCD_decrementDutyCycle();
-        }
-    }
-    else
-    {
-        //Everything is good
-
-        return;
-    }
-
-    //Sync Changes
-    TCD0.CTRLE = TCD_SYNC_bm;
 }
