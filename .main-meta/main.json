@@ -4,27 +4,23 @@
     "content": {
         "metaDataVersion": "1.1.0",
         "name": "com.microchip.mcu8.mplabx.project.avr128db48-uv-monitor-mplab",
-        "version": " ",
-        "displayName": "",
-        "projectName": "avr128db48-uv-monitor-mplab",
-        "shortDescription": "Create a portable solar powered UV monitor with AVR DB",
+        "version": "1.0.0",
+        "displayName": "Batteryless UV Index (UVI) and Heat Index Monitor with AVR32DB32",
+        "projectName": "avr32db32-uv-monitor-mplab",
+        "shortDescription": "This demo of the AVR DB family of MCUs implements a solar energy harvester to measure and display either the UV Index or the heat index",
         "ide": {
             "name": "MPLAB X",
-            "semverRange": ">=5.50.0"
+            "semverRange": ">=6.0.0"
         },
         "compiler": [
             {
                 "name": "XC8",
-                "semverRange": "^2.31.0"
+                "semverRange": "^2.40.0"
             }
         ],
         "dfp": {
-            "name": "",
-            "semverRange": ""
-        },
-        "configurator": {
-            "name": "",
-            "semverRange": ""
+            "name": "AVR-Dx_DFP",
+            "semverRange": "^2.1.152"
         },
         "device": {
             "metaDataVersion": "1.0.0",
@@ -32,14 +28,17 @@
             "content": {
                 "metaDataVersion": "1.0.0",
                 "category": "com.microchip.device",
-                "name": "AVR128DB48",
+                "name": "AVR32DB32",
                 "versionRange": "*"
             }
         },
         "author": "Robert Perkel",
-        "subcategories": [],
-        "peripherals": [],
-        "keywords": [],
+        "peripherals": [
+            "TCD", "DAC", "TWI", "CCL"
+        ],
+        "keywords": [
+            "Low Power", "Temperature", "Weather", "Boost"
+        ],
         "additionalData": {
             "longDescription": {
                 "metaDataVersion": "1.0.0",

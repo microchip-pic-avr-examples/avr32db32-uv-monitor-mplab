@@ -5,8 +5,6 @@
 # Batteryless UV Index (UVI) and Heat Index Monitor with AVR32DB32
 This demo of the AVR&reg; DB family of MCUs implements a solar energy harvester to measure and display either the UV Index or the heat index. Multi-Voltage I/O (MVIO) is used to to communicate with 3.3V sensors, while the microcontroller runs at 5V.
 
-![PCB Back](./images/PCB_back.png)
-
 ## Software Used
 - [MPLAB X IDE v6.0.0 or newer](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide?utm_source=GitHub&utm_medium=TextLink&utm_campaign=MCU8_MMTCha_avrdb&utm_content=avr32db32-uv-monitor-github)
 - [MPLAB XC8 v2.40.0 or newer](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers?utm_source=GitHub&utm_medium=TextLink&utm_campaign=MCU8_MMTCha_avrdb&utm_content=avr32db32-uv-monitor-github)
@@ -58,7 +56,7 @@ Warning: **Do not exceed maximum input ratings. This circuit cannot regulate vol
 Note: *The 5V rail may vary depending on the amount of energy from the solar panel and the current load on the rail. The 3.3V rail is regulated by an LDO to ensure stable voltage levels.*
 
 ## Implementation
-Warning: **This demo is for educational use only. Please obtain accurate UV Index and Heat Index information from a trusted source, such as the [National Oceanic and Atmospheric Administration (noaa.gov)](noaa.gov). Prolonged exposure to high temperatures can be life-threatening. Exposure to UV without appropriate precautions will also have health consequences.**
+**Warning: This demo is for educational use only. Please obtain accurate UV Index and Heat Index information from a trusted source, such as the [National Oceanic and Atmospheric Administration (noaa.gov)](noaa.gov). Prolonged exposure to high temperatures can be life-threatening. Exposure to UV without appropriate precautions will also have health consequences.**
 
 ### Overview
 
@@ -66,8 +64,12 @@ Warning: **This demo is for educational use only. Please obtain accurate UV Inde
 ### Solar Energy Harvester
 To generate the 5V supply for this demo, a simple boost converter was built using the Core Independent Peripherals (CIPs) on the microcontroller. To run the boost, a 100 kHz PWM was created in the Timer/Counter D (TCD) peripheral on the device. The TCD output is then gated by the Analog Comparator (AC) via the logical AND inside of the Configurable Custom Logic (CCL). This configuration is shown below.
 
-**Figure 1 - Simplified Power System**
+**Simplified Power System Diagram**  
 ![Simplified Power Supply Diagram](./images/powerDiagram.png)
+
+The power supply on the PCB is visible on the top half of the board, towards the solar panel, as shown below.
+
+![PCB Back](./images/PCB_back.png)
 
 ### Display Scale
 
