@@ -16,8 +16,8 @@ pipeline {
 	
 	environment {
 		GITHUB_OWNER = 'microchip-pic-avr-examples'	
-		GITHUB_URL ='https://github.com/microchip-pic-avr-examples/avr128db48-uv-monitor-mplab'
-		BITBUCKET_URL = 'https://bitbucket.microchip.com/scm/ebe/avr128db48-uv-monitor-mplab.git'
+		GITHUB_URL ='https://github.com/microchip-pic-avr-examples/avr32db32-uv-monitor-mplab'
+		BITBUCKET_URL = 'https://bitbucket.microchip.com/scm/ebe/avr32db32-uv-monitor-mplab.git'
 		SEMVER_REGEX = '^(0|[1-9]\\d*)+\\.(0|[1-9]\\d*)+\\.(0|[1-9]\\d*)+$'
 		ARTIFACTORY_SERVER = 'https://artifacts.microchip.com:7999/artifactory'
 	}	
