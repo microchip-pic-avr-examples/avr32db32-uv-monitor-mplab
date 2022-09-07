@@ -5,6 +5,8 @@
 # Batteryless UV Index (UVI) and Heat Index Monitor with AVR32DB32
 This demo of the AVR&reg; DB family of MCUs implements a solar energy harvester to measure and display either the UV Index or the heat index. Multi-Voltage I/O (MVIO) is used to to communicate with 3.3V sensors, while the microcontroller runs at 5V.
 
+![PCB Back](./images/PCB_back.png)
+
 ## Software Used
 - [MPLAB X IDE v6.0.0 or newer](https://www.microchip.com/en-us/tools-resources/develop/mplab-x-ide?utm_source=GitHub&utm_medium=TextLink&utm_campaign=MCU8_MMTCha_avrdb&utm_content=avr32db32-uv-monitor-github)
 - [MPLAB XC8 v2.40.0 or newer](https://www.microchip.com/en-us/tools-resources/develop/mplab-xc-compilers?utm_source=GitHub&utm_medium=TextLink&utm_campaign=MCU8_MMTCha_avrdb&utm_content=avr32db32-uv-monitor-github)
@@ -132,7 +134,7 @@ Since the humidity sensor is temperature dependent, the values are not expected 
 
 To program the board, attach a UPDI programmer to the UPDI header, then apply power to the debug connector's +5V and GND point.
 
-//TODO: Board Image Here!
+![PCB Front](./images/PCB_front.png)
 
 After applying power, the board can be programmed as normal.  
 
